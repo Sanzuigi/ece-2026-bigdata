@@ -1,0 +1,7 @@
+.*
+!.gitignore
+!.python-version
+__pycache__/
+*.csv
+*.bin
+s3.env
