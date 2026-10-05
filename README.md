@@ -8,7 +8,7 @@ The Python project generates fictional users and orders for use in later data pi
 ## Lab progress
 
 - UV lab: implemented and verified. See [submission](labs/lab-01-uv.md).
-- S3 lab: pending.
+- S3 lab: executed and verified. See [submission](labs/lab-02-s3.md).
 
 ## Setup
 
@@ -76,3 +76,26 @@ uv sync --locked
 ```
 
 Temporary platform credentials must be renewed separately.
+
+## S3 lab scripts
+
+The Onyxia default AWS profile and current platform credentials are required.
+Set the endpoint and bucket in the terminal before running SDK scripts:
+
+```bash
+export AWS_PAGER=""
+export S3_ENDPOINT_URL="$(aws configure get endpoint_url --profile default)"
+export LAB_BUCKET_NAME="$KUBERNETES_NAMESPACE"
+```
+
+- Install s5cmd: `bash scripts/install_s5cmd.sh`.
+- Test a presigned upload: `uv run --with boto3 python scripts/presigned_upload.py`.
+- Run ingestion: `bash scripts/upload_bronze.sh`.
+- Verify stored datasets: `uv run --with boto3 python scripts/verify_bronze.py`.
+
+Run ingestion when the Job, ConfigMaps, and Secret from a previous run have
+been removed. Verification compares stored data with the local CSV files.
+
+The final users and orders datasets remain in the S3 bronze layer.
+The exercise cleanup script deletes selected keys, including `bronze/users.csv`;
+use it only when that deletion is intended.
