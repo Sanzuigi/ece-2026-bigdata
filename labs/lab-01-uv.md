@@ -6,41 +6,27 @@ Source: [lab-1-uv.md](https://github.com/adaltas/ece-bigdata-2026-fall/blob/main
 
 ## Objective
 
-Create a packaged Python project with uv and generate fictional users and orders.
-These datasets provide the input for the S3 lab and subsequent transformations.
+The aim of this lab was to create a packaged Python project with uv and use it to generate fictional users and orders. These two datasets are linked, as each order refers to a user, which provides the input needed for the S3 lab and the transformations in the following modules.
 
 ## Environment and project setup
 
-The work was performed in the Onyxia `vscode-pyspark` service.
-A dedicated repository directory was created at
-`/home/onyxia/work/ece-2026-bigdata`.
+I carried out the lab in the Onyxia `vscode-pyspark` service, with the project stored in its own directory at `/home/onyxia/work/ece-2026-bigdata`. Creating a separate directory allowed the Git repository to contain the project files without including the rest of the service's work directory.
 
-The environment used Git 2.55.0, uv 0.12.10, Python 3.13.15,
-and Faker 40.40.0.
+The environment used Git 2.55.0, uv 0.12.10, Python 3.13.15, and Faker 40.40.0. I initialized Git on the `main` branch, created the project with `uv init --package`, and added Faker with `uv add faker`.
 
-Git was initialized on the `main` branch. The project was created using
-`uv init --package`, and Faker was installed using `uv add faker`.
-Project metadata and dependencies are stored in `pyproject.toml`.
-The committed `uv.lock` records the exact dependency versions.
+The project information and dependencies are stored in `pyproject.toml`, with the exact dependency versions recorded in `uv.lock`. This lock file is committed alongside the source code, since restoring the project should also restore the dependency versions used for the lab.
 
 ## Implementation
 
-The Python package is named `ece_2026_bigdata`.
+The package is named `ece_2026_bigdata` and contains three modules, each with a specific role in generating or printing the datasets.
 
-`serialize.py` prints records as CSV, a JSON array, or JSON Lines.
-An empty output argument suppresses printing, allowing one generator to call another.
+Firstly, `serialize.py` handles the output, be it CSV, a JSON array, or JSON Lines. When the output argument is empty, the function prints nothing, which allows the order generator to call the user generator without also printing the user dataset.
 
-`dataset_users.py` generates 50 users by default. Each user contains a UUID
-and a fictional profile supplied by Faker.
+`dataset_users.py` generates 50 users by default, with each user containing a UUID and a fictional profile provided by Faker. `dataset_orders.py` then generates between 0 and 100 orders per user by default, with each order containing its own UUID, the user's UUID, a date, a quantity, and a product.
 
-`dataset_orders.py` generates between 0 and 100 orders per user by default.
-Each order contains a UUID, user UUID, date, quantity, and product.
-The default timeline starts on January 1, 2020, in UTC. Each subsequent
-order is generated in the next hourly interval.
+The default timeline starts on January 1, 2020, in UTC. Each subsequent order is generated in the next hourly interval, which gives the orders a progression through time rather than placing them all within the same hour.
 
-Faker is seeded with 42. Identical commands produce identical results
-across separate executions in the verified environment.
-Dependency versions are locked to support reproducibility.
+Faker is seeded with 42, so identical commands produce identical results across separate executions in the verified environment. The dependency versions are also locked, as using the same seed does not remove the need to control the environment in which the data is generated.
 
 The command-line entry points are:
 
@@ -50,10 +36,11 @@ dataset-users = "ece_2026_bigdata.dataset_users:main"
 dataset-orders = "ece_2026_bigdata.dataset_orders:main"
 ```
 
-The implementation also rejects negative user counts and invalid order bounds,
-handles empty CSV datasets, and converts timezone-aware start dates to UTC.
+I also included checks rejecting negative user counts and invalid order bounds. Empty CSV datasets are handled without an indexing error, and timezone-aware start dates are converted to UTC, allowing the dates to follow the same timezone convention.
 
 ## Execution
+
+I used the following commands to display the help information and generate small datasets:
 
 ```bash
 uv run dataset-users -h
@@ -62,20 +49,17 @@ uv run dataset-users -c 2 -o jsonline
 uv run dataset-orders -u 2 -C 1 -c 2 -o jsonline
 ```
 
-The sample execution produced two users and three orders.
-The first user UUID was `bdd640fb-0667-4ad1-9c80-317fa3b1799d`.
-The first order referenced that same UUID, confirming the relationship.
-Its product was `cookie` and its quantity was 2.
+This execution produced two users and three orders. The first user's UUID was `bdd640fb-0667-4ad1-9c80-317fa3b1799d`, and the first order referenced that same UUID, showing that the order was associated with the first generated user. Its product was `cookie`, with a quantity of 2.
 
 ## Verification results
 
-The following command was executed successfully:
+To check the generators beyond this small example, I ran the verification script:
 
 ```bash
 uv run python scripts/verify_uv.py
 ```
 
-Observed output:
+The execution returned:
 
 ```text
 PASS: csv: formats, links, bounds, dates, reproducibility
@@ -86,20 +70,16 @@ PASS: custom start date
 All UV lab verification checks passed.
 ```
 
-The checks parse CSV with a CSV reader, including addresses containing line breaks.
-They verify that every order references a generated user, quantities stay between
-1 and 5, products belong to the predefined list, and timestamps fall within
-the expected hourly intervals.
+The script parses each output format, with CSV being read through a CSV reader since an address can contain line breaks within a single field. It checks that every order refers to a generated user, that quantities remain between 1 and 5, and that products belong to the predefined list.
+
+It also checks that timestamps fall within the expected hourly intervals and that repeated commands give the same output. The default execution produced 50 users and 2,829 linked orders, with the custom start-date check also passing.
 
 ## Version control
 
-The submission repository is
-[Sanzuigi/ece-2026-bigdata](https://github.com/Sanzuigi/ece-2026-bigdata).
+The submission repository is [Sanzuigi/ece-2026-bigdata](https://github.com/Sanzuigi/ece-2026-bigdata).
 
-Source code, documentation, project configuration, and the lock file are versioned.
-Virtual environments, generated datasets, and temporary credential files are excluded.
+I versioned the source code, documentation, project configuration, and lock file, as these are the files needed to restore and run the project. Virtual environments, generated datasets, and temporary credential files are excluded from Git, with the datasets being reproducible from the generators.
 
 ## Conclusion
 
-The generators and their command-line entry points are implemented and verified.
-The project is ready to supply the user and order datasets required by the S3 lab.
+The two generators and their command-line entry points were implemented and verified, with the checks confirming the output formats and the relationship between users and orders. The project can therefore provide the datasets needed for the S3 lab, while keeping the same environment through the committed dependency lock file.

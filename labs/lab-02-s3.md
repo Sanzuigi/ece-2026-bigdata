@@ -6,51 +6,31 @@ Source: [lab-2-s3.md](https://github.com/adaltas/ece-bigdata-2026-fall/blob/main
 
 ## Objective
 
-Explore S3 object operations and storage management, then upload the datasets
-from the UV lab through a Kubernetes Job into the bronze layer.
+The aim of this lab was to explore how S3 stores and manages objects, then use a Kubernetes Job to upload the datasets from the UV lab into the bronze layer. The first part focused on individual storage operations, with the second bringing those operations into an ingestion task running inside the cluster.
 
 ## Environment
 
-The lab was executed in the Onyxia `vscode-pyspark` service.
-The namespace and personal bucket were both `user-r-homsi-ece`.
+I carried out the lab in the Onyxia `vscode-pyspark` service, with `user-r-homsi-ece` being both my namespace and personal bucket name.
 
-Tools used:
-- AWS CLI 2.36.40.
-- kubectl client 1.37.0.
-- s5cmd 2.3.0, installed after checking the release archive checksum.
-- Python and uv from the UV lab.
-- boto3, supplied temporarily through `uv run --with boto3`.
+The tools used were AWS CLI 2.36.40, kubectl client 1.37.0, and s5cmd 2.3.0, alongside Python and uv from the UV lab. I installed s5cmd after checking the release archive's checksum, while boto3 was supplied temporarily through `uv run --with boto3` for the Python SDK operations.
 
-Kubernetes permission checks returned `yes` for creating Jobs, ConfigMaps,
-and Secrets.
+Before creating the Kubernetes resources, I checked the permissions for Jobs, ConfigMaps, and Secrets. All three checks returned `yes`, which confirmed that the service could create the resources needed for the final exercise.
 
 ## S3 configuration
 
-The service supplied AWS credentials and the endpoint through environment
-variables, but the default profile files were missing. Initial commands
-returned “The config profile (default) could not be found”.
+The service had supplied AWS credentials and the endpoint through environment variables, but the default profile files were missing. As a result, the first commands returned “The config profile (default) could not be found”, even though the credential variables were present.
 
-A default profile was created under `~/.aws` from the supplied environment
-variables, without printing credentials. The files were restricted to the
-owner with permissions `0600`. Bucket listing then succeeded.
+I created a default profile under `~/.aws` using the supplied environment variables, without printing the credentials. The files were restricted to the owner with permissions `0600`, and the bucket listing then succeeded.
 
-Credentials remain temporary. Creating a profile does not extend their validity.
-Credential files are outside the project repository and are not committed.
+These credentials remain temporary, since copying them into a profile does not extend their validity. The credential files are outside the project repository and are not committed to Git.
 
 ## Object operations
 
-The user generator produced `users.csv`, containing 50 users and occupying
-7,351 bytes. The file was uploaded to `bronze/users.csv`.
+The user generator produced a `users.csv` file containing 50 users and occupying 7,351 bytes. I uploaded this file to `bronze/users.csv`, then listed it with both AWS CLI and s5cmd, with both tools returning the same size.
 
-Both AWS CLI and s5cmd listed the object. A downloaded copy was compared
-with the local file using `diff`; the files were identical.
+I downloaded a copy and compared it with the local file using `diff`. The files were identical, which confirmed that the upload and download had preserved the dataset. I then moved the object to `bronze/users_renamed.csv`, listed and deleted it, before uploading it again under its original key.
 
-The object was moved to `bronze/users_renamed.csv`, listed, deleted,
-and uploaded again under its original key.
-
-S3 stores objects by key. A slash in a key provides a prefix convention,
-rather than creating a filesystem directory. Moving an object performs
-a copy followed by deletion, rather than an atomic rename.
+S3 identifies objects through their keys, with the slash in `bronze/users.csv` providing a prefix convention rather than creating a filesystem directory. Moving an object therefore involves copying it and deleting the original, which means the rename is not atomic.
 
 ## Metadata
 
@@ -58,11 +38,9 @@ The uploaded object's ETag was:
 
 `36aa2c0461b8c3498456bf92ad68bbb7`
 
-It matched the local MD5 for this upload. ETags should not be treated as
-universal MD5 checksums, particularly for multipart uploads or differing
-encryption configurations.
+This matched the local MD5 for the tested upload. Even though the two values matched here, an ETag should not be treated as a universal MD5 checksum, as multipart uploads and different encryption configurations can change how it is calculated.
 
-An upload with explicit `text/csv` content type returned these user metadata:
+I then uploaded the file with an explicit `text/csv` content type and descriptive metadata. The returned user metadata were:
 
 ```json
 {
@@ -72,99 +50,63 @@ An upload with explicit `text/csv` content type returned these user metadata:
 }
 ```
 
-Metadata describes an object but does not provide a bucket-wide search index.
-Updating metadata requires an upload or copy with replacement metadata.
+These values describe the object and its source, but they do not provide a search index across the bucket. Updating the metadata also requires another upload or a copy with replacement metadata, as it cannot be edited independently in place.
 
 ## Presigned URLs
 
-A presigned GET URL with a 300-second lifetime downloaded an identical copy
-of the user dataset.
+I generated a presigned GET URL with a 300-second lifetime and used it to download the user dataset without supplying credentials to the HTTP request. The downloaded file matched the local copy.
 
-`scripts/presigned_upload.py` generated a presigned PUT URL with boto3,
-uploaded the dataset, and verified its content. The HTTP response was 200.
+For the upload, `scripts/presigned_upload.py` generated a presigned PUT URL with boto3, uploaded the dataset, and checked its content afterwards. The request returned HTTP 200, with the stored data being identical to the local file.
 
-The signed URLs were not printed or committed. These URLs authorize a
-specific operation temporarily. Expiration behavior was not separately timed
-in this execution.
+The signed URLs were not printed or committed, since they temporarily authorize a specific operation for whoever holds the URL. Expiration behavior was not separately timed during this execution.
 
 ## Multipart upload
 
-A 200 MiB file was uploaded to `large/dataset.bin`. Its recorded size was
-209,715,200 bytes. Its ETag ended with `-25`, indicating 25 parts.
+I uploaded a 200 MiB file to `large/dataset.bin`, with the recorded size being 209,715,200 bytes. Its ETag ended in `-25`, indicating that the upload used 25 parts.
 
-The multipart listing contained no incomplete uploads. Multipart uploads
-allow parallel transfer and retries of individual parts.
+The multipart listing contained no incomplete uploads. Splitting a large file into parts allows them to be transferred in parallel, with a failed part being retried separately rather than requiring the whole file to be uploaded again.
 
 ## Versioning
 
-Versioning was enabled. The 50-user dataset was uploaded, followed by a
-40-user replacement. Their sizes were 7,351 and 5,855 bytes respectively.
+After enabling versioning, I uploaded the 50-user dataset and then replaced it with a 40-user version. Both versions appeared in the listing, with sizes of 7,351 and 5,855 bytes respectively.
 
-The original 50-user version was retrieved by its version ID and matched
-the local file. Deleting the current object created a delete marker while
-retaining the older versions. Another upload restored the current dataset.
+I retrieved the original 50-user version through its version ID and compared it with the local file. They were identical, showing that replacing the current object had kept the previous data available.
 
-The listing also contained a `null` version from before versioning was enabled.
+Deleting the current object then created a delete marker while retaining the older versions. Another upload restored the current dataset. The listing also contained a `null` version, which came from the object stored before versioning was enabled.
 
 ## Lifecycle configuration
 
-The rules in `infrastructure/lifecycle.json` were applied and retrieved:
+I applied the rules in `infrastructure/lifecycle.json` and retrieved the configuration to check that they had been recorded. The three rules were set to expire objects under `large/` after 30 days, delete non-current versions after 7 days, and abort incomplete multipart uploads after 7 days.
 
-- Expire objects under `large/` after 30 days.
-- Delete non-current versions after 7 days.
-- Abort incomplete multipart uploads after 7 days.
-
-The configuration was verified immediately. The scheduled actions were not
-observed over their multi-day retention periods.
+These rules allow the storage backend to manage retention and unfinished transfers automatically. Their configuration was verified immediately, but the scheduled actions were not observed over their multi-day retention periods.
 
 ## Access control
 
-The bucket initially had no policy. The object ACL showed an `admin` owner
-with `FULL_CONTROL`. No public ACL was applied.
+The bucket initially had no policy, and the object ACL showed an `admin` owner with `FULL_CONTROL`. I read the ACL without applying a public one.
 
-A temporary policy denied `s3:DeleteObject` under `bronze/`.
-Deleting `bronze/protected.csv` returned `AccessDenied`, confirming that
-the policy was enforced for the tested request. The policy was then removed.
-
-The reusable policy template is `infrastructure/policy.template.json`.
+I then applied a temporary policy denying `s3:DeleteObject` under `bronze/` and attempted to delete `bronze/protected.csv`. The request returned `AccessDenied`, which confirmed that the policy was enforced for this request. I removed the policy after the test, with the reusable version kept in `infrastructure/policy.template.json`.
 
 ## Immediate retrieval and exercise cleanup
 
-An immediate download after upload matched the local dataset. An earlier
-download to `/dev/null` succeeded but reported a timestamp-update warning;
-verification was repeated using a regular file.
+An immediate download after an upload matched the local dataset. The earlier download to `/dev/null` had succeeded but returned a warning about updating its timestamp, so I repeated the verification with a regular file.
 
-This confirms the observed immediate retrieval behavior for the tested object,
-rather than establishing every consistency guarantee of the backend.
+This confirmed that the tested object could be retrieved immediately after the upload. It does not establish every consistency guarantee of the backend, since the check only covers the operation carried out during this lab.
 
-The cleanup script deleted all versions and delete markers for the four
-exercise keys: `bronze/users.csv`, `bronze/upload.csv`,
-`bronze/protected.csv`, and `large/dataset.bin`.
+I then used the cleanup script to delete all versions and delete markers for the four exercise keys: `bronze/users.csv`, `bronze/upload.csv`, `bronze/protected.csv`, and `large/dataset.bin`. The script targeted these exact keys, leaving unrelated objects outside its scope.
 
-Versioning was suspended and the lifecycle configuration was removed.
-Unrelated object keys were not targeted.
+Versioning was suspended and the lifecycle configuration was removed before moving on to the Kubernetes upload.
 
 ## Kubernetes ingestion
 
-`scripts/upload_bronze.sh` generated the datasets and created:
+The final exercise used `scripts/upload_bronze.sh` to generate both datasets and create the resources needed for ingestion. The `datasets` ConfigMap mounted the CSV files under `/data`, while `s3-config` supplied the endpoint, region, and bucket name. The temporary credentials were stored in the `s3-credentials` Secret, with the `upload-bronze` Job running the AWS CLI container to carry out the upload.
 
-- `datasets`: a ConfigMap mounting the CSV files under `/data`.
-- `s3-config`: a ConfigMap containing the endpoint, region, and bucket name.
-- `s3-credentials`: a Secret containing temporary AWS credentials.
-- `upload-bronze`: a Job running the AWS CLI container.
+The two datasets had a combined size of 338,919 bytes, which was below the 1 MiB ConfigMap limit and allowed them to be supplied through this mechanism for the lab.
 
-The combined dataset size was 338,919 bytes, below the 1 MiB ConfigMap limit.
+The initial Job could not create a Pod because the platform quota required `limits.cpu`. I added a CPU limit of `200m` to the manifest and recreated the Job, which then completed successfully.
 
-The initial Job could not create a Pod because the platform quota required
-`limits.cpu`. A CPU limit of `200m` was added to the manifest, and the Job
-was recreated successfully.
+The resulting manifest requests `100m` of CPU and `128Mi` of memory, with limits of `200m` and `256Mi`. It uses the lab's `amazon/aws-cli:latest` image, although a production deployment should pin an approved version or digest to control which image is run.
 
-The resulting manifest uses CPU and memory requests of `100m` and `128Mi`,
-with limits of `200m` and `256Mi`. It uses the lab's `amazon/aws-cli:latest`
-image; a production deployment should pin an approved image version or digest.
-
-The Job completed and uploaded both datasets. Verification with
-`scripts/verify_bronze.py` returned:
+After the Job uploaded both datasets, I ran `scripts/verify_bronze.py` and obtained:
 
 ```text
 PASS: users.csv: 7351 bytes, 50 records, identical
@@ -172,46 +114,30 @@ PASS: orders.csv: 331568 bytes, 2829 records, identical
 PASS: all stored orders reference stored users
 ```
 
-The Job, both ConfigMaps, and the Secret were deleted after verification.
-The two bronze datasets were retained for future modules.
+Both stored files matched their local copies, and every stored order referred to one of the stored users. I then deleted the Job, both ConfigMaps, and the Secret, while retaining the two bronze datasets for the following modules.
 
 ## Questions
 
 ### Why use a Secret rather than a ConfigMap for credentials?
 
-ConfigMaps are intended for non-sensitive configuration. Secrets provide
-a dedicated mechanism for sensitive values and can be protected through
-access controls and encryption at rest. Base64 encoding alone is not
-encryption. Credential values must not be committed to Git.
+A ConfigMap is intended for non-sensitive configuration, such as the endpoint or bucket name, whereas credentials need to be handled as sensitive values. A Secret provides a dedicated mechanism for those values, which can be protected through access controls and encryption at rest.
+
+However, base64 encoding alone is not encryption, so using a Secret does not remove the need to control access to it. The credential values must also stay out of Git, since versioning the configuration should not expose the credentials used to access the storage.
 
 ### What happens if the Job runs tomorrow, and how should production provide credentials?
 
-The copied Onyxia credentials may have expired, causing authentication failure.
-A new Job would require a Secret populated with current credentials.
+The copied Onyxia credentials may have expired by tomorrow, which would cause the Job's authentication to fail even if its manifest had not changed. Running it again would therefore require a Secret populated with current credentials.
 
-A production platform should use workload identity or an equivalent mechanism
-to provide short-lived credentials automatically, without embedding static
-keys in manifests.
+In production, workload identity or an equivalent mechanism should provide short-lived credentials automatically. This allows the Job to obtain the access it needs without embedding static keys in its manifest.
 
 ### How would this become daily ingestion?
 
-Use a CronJob with a daily schedule, such as `0 2 * * *`, and an explicit
-timezone. Its Job template would perform the ingestion.
+The Job could be turned into a CronJob with a daily schedule, such as `0 2 * * *`, and an explicit timezone. Its Job template would then run the ingestion at the scheduled time.
 
-The process must obtain current credentials and fresh source data for every
-run. Scheduling this fixed ConfigMap alone would repeatedly upload the same
-snapshot. A production process should also handle retries, avoid unwanted
-overlapping runs, and report failures.
+Nevertheless, scheduling the existing ConfigMap alone would only upload the same snapshot again each day. The process would need fresh source data and current credentials for each run, as well as retries, control over overlapping runs, and a way to report failures.
 
 ## Submission and final state
 
-The repository contains source code, reusable scripts, infrastructure
-configuration, and this write-up. Credentials and generated CSV files
-are excluded from Git.
+The repository contains the source code, reusable scripts, infrastructure configuration, and this write-up. Credentials and generated CSV files are excluded from Git, while the bucket retains `bronze/users.csv` with 50 users and `bronze/orders.csv` with 2,829 orders.
 
-The bucket retains:
-- `bronze/users.csv`: 50 users.
-- `bronze/orders.csv`: 2,829 orders.
-
-The cleanup script must not be rerun unless deletion of its exercise keys
-is intended, because `bronze/users.csv` is now a retained input for future labs.
+The cleanup script must not be run again unless deleting its exercise keys is intended, since `bronze/users.csv` is now one of the retained inputs for future labs. The final datasets therefore remain available in S3, with the temporary Kubernetes resources having been removed after verification.
