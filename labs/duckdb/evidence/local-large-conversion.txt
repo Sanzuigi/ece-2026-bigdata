@@ -1,2 +1,0 @@
-[90m-- Loading resources from init-local.sql
-[00m

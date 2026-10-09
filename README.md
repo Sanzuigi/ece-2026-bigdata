@@ -2,12 +2,13 @@
 
 Author: Roy Homsi
 
-This repository contains my work for the ECE Big Data Framework course, with the first two labs focusing on generating datasets in Python and storing them in S3. The users and orders are fictional, but their relationship is kept through a user UUID, which allows the datasets to be used together in the following modules.
+This repository contains my work for the ECE Big Data Framework course, with the three labs covering dataset generation in Python, storage in S3 and SQL analytics with DuckDB. The users and orders are fictional, but their relationship is kept through a user UUID, which allows the datasets to be used together in the following modules.
 
-## Lab progress
+## Lab submissions
 
 - UV lab: implemented and verified. See [submission](labs/lab-01-uv.md).
 - S3 lab: executed and verified. See [submission](labs/lab-02-s3.md).
+- DuckDB lab: executed and verified on S3. See [submission](labs/lab-03-duckdb.md).
 
 ## Setup
 
@@ -56,9 +57,10 @@ It checks the three output formats, the links between users and orders, the orde
 
 ## Repository structure
 
-- `src/ece_2026_bigdata/`: the generators and serialization module.
+- `src/ece_2026_bigdata/`: the generators, serialization module and DuckDB monthly report.
 - `scripts/verify_uv.py`: the automated checks for the UV lab.
-- `labs/`: the individual lab write-ups.
+- `scripts/` and `infrastructure/`: reusable S3 scripts and Kubernetes configuration.
+- `labs/`: the three write-ups, DuckDB SQL and measured execution evidence.
 - `pyproject.toml`: the project information, dependencies, and commands.
 - `uv.lock`: the exact dependency versions.
 
@@ -93,3 +95,14 @@ export LAB_BUCKET_NAME="$KUBERNETES_NAMESPACE"
 Before running ingestion again, the Job, ConfigMaps, and Secret from a previous run must have been removed, as the script creates those resources under the same names. Verification compares the stored datasets with the local CSV files.
 
 The final users and orders datasets remain in the S3 bronze layer. The exercise cleanup script deletes selected keys, including `bronze/users.csv`, so it should only be used when deleting those objects is intended.
+
+## DuckDB lab
+
+The DuckDB dependency and `orders-report` command are already included in the project. With the Onyxia S3 connection configured, the monthly report can be run with:
+
+```bash
+uv run orders-report
+uv run orders-report -p cookie
+```
+
+The DuckDB write-up explains how to reproduce the complete execution and remove its temporary outputs afterwards. The completed run retained both bronze datasets, with its SQL results and benchmark plans kept alongside the solutions.

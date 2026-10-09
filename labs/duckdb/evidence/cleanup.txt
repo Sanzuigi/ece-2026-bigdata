@@ -1,9 +1,0 @@
-delete: s3://user-r-homsi-ece/analytics/orders.parquet
-delete: s3://user-r-homsi-ece/large/orders.csv
-delete: s3://user-r-homsi-ece/large/orders.parquet
-delete: s3://user-r-homsi-ece/analytics/orders_by_product/product=bread/data_0.parquet
-delete: s3://user-r-homsi-ece/analytics/orders_by_product/product=brioche/data_0.parquet
-delete: s3://user-r-homsi-ece/analytics/orders_by_product/product=cookie/data_0.parquet
-delete: s3://user-r-homsi-ece/analytics/orders_by_product/product=croissant/data_0.parquet
-delete: s3://user-r-homsi-ece/analytics/orders_by_product/product=donut/data_0.parquet
-delete: s3://user-r-homsi-ece/analytics/orders_by_product/product=drink/data_0.parquet
