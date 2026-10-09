@@ -1,0 +1,7 @@
+2026-10-09 12:40:04     130526 analytics/orders.parquet
+2026-10-09 12:40:04      23967 analytics/orders_by_product/product=bread/data_0.parquet
+2026-10-09 12:40:04      24265 analytics/orders_by_product/product=brioche/data_0.parquet
+2026-10-09 12:40:04      24282 analytics/orders_by_product/product=cookie/data_0.parquet
+2026-10-09 12:40:04      25322 analytics/orders_by_product/product=croissant/data_0.parquet
+2026-10-09 12:40:04      24181 analytics/orders_by_product/product=donut/data_0.parquet
+2026-10-09 12:40:04      24949 analytics/orders_by_product/product=drink/data_0.parquet

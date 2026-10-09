@@ -1,3 +1,5 @@
+> Historical local validation before the S3 connection was repaired. The completed remote results are in results.md.
+
 # DuckDB lab: local validation
 
 S3 execution is pending: both the default AWS profile and DuckDB persistent secret return InvalidAccessKeyId, including after the service restart. The portal can browse the bronze objects.

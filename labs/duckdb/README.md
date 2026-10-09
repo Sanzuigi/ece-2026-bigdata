@@ -1,5 +1,7 @@
 # DuckDB lab files
 
+Completed on 9 October 2026. See results.md and evidence/ for the verified remote run. The generated temporary S3 objects were cleaned up; both bronze datasets remain available.
+
 Run commands from your existing Onyxia uv project root.
 
 ## Files
@@ -62,7 +64,7 @@ The local run is explicitly labelled and does not complete the S3 or performance
 
 ## Cleanup
 
-Keep `bronze/users.csv` and `bronze/orders.csv` for the next module. The subject asks to remove its temporary `analytics/` and `large/` S3 objects and `orders_large.csv` after recording evidence. Check that these prefixes contain only this lab's outputs before deleting them. Preserve the SQL, Python, answers and evidence. The runner leaves generated objects in place so the results can be inspected.
+Keep `bronze/users.csv` and `bronze/orders.csv` for the next module. The subject asks to remove its temporary `analytics/` and `large/` S3 objects and `orders_large.csv` after recording evidence. Check that these prefixes contain only this lab's outputs before deleting them. Preserve the SQL, Python, answers and evidence. The runner leaves generated objects in place for inspection; finalize_lab.py records benchmark measurements and removes the exact generated objects after a successful run.
 
 ## Measurement caveat
 

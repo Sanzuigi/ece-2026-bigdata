@@ -34,4 +34,4 @@ Average orders per user includes users with zero orders. First and last order qu
 
 ## Evidence status
 
-S3 execution is pending a credential refresh. No remote query result or performance measurement is claimed here. Raw output is captured by `run_lab.py` after access is restored.
+The S3 run completed successfully. See `results.md` and `evidence/` for actual remote SQL results, benchmark measurements, partition pruning, Python checks and cleanup verification. The measured Parquet file had three row groups and the 2100 filter skipped all three, since its latest orders were in 2048.

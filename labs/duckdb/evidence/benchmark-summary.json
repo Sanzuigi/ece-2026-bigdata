@@ -1,0 +1,17 @@
+{
+  "csv": {
+    "received": "28.2 MiB",
+    "get_requests": "1",
+    "seconds": "1.18"
+  },
+  "parquet": {
+    "received": "203.5 KiB",
+    "get_requests": "4",
+    "seconds": "0.351"
+  },
+  "filtered-parquet": {
+    "received": "16.0 KiB",
+    "get_requests": "1",
+    "seconds": "0.278"
+  }
+}
