@@ -1,5 +1,7 @@
 # S3 Lab: Object Storage and Kubernetes Ingestion
 
+Roy Homsi, Big Data Framework
+
 [Lab subject](https://github.com/adaltas/ece-bigdata-2026-fall/blob/main/03.object-storage/lab-2-s3.md)
 
 ## Environment

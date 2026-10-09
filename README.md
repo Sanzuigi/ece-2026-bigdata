@@ -1,6 +1,6 @@
 # Big Data Framework
 
-Roy Homsi — ECE Paris
+Roy Homsi, ECE Paris
 
 This project contains my work for the uv, S3 and DuckDB labs. I generated fictional users and orders in Python, uploaded them to the bronze layer in S3, then used DuckDB to query the data and compare CSV with Parquet.
 

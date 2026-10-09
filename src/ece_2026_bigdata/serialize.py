@@ -13,8 +13,6 @@ def serialize(dataset, output):
         for record in dataset:
             print(json.dumps(record, default=str))
     elif output == "csv":
-        if not dataset:
-            return
         buffer = io.StringIO()
         writer = csv.DictWriter(buffer, fieldnames=dataset[0].keys())
         writer.writeheader()

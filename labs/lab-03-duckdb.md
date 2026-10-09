@@ -1,5 +1,7 @@
 # DuckDB Lab: SQL Analytics and Parquet
 
+Roy Homsi, Big Data Framework
+
 [Lab subject](https://github.com/adaltas/ece-bigdata-2026-fall/blob/main/04.sql-analytics/lab-duckdb.md)
 
 ## Environment and bronze queries
@@ -12,7 +14,7 @@ The SQL is in [analytics.sql](duckdb/analytics.sql) and [parquet.sql](duckdb/par
 
 ### Why does approx_unique return 40 and 3167?
 
-My output returned 40 distinct user identifiers and 3,167 order identifiers, even though the exact counts are 50 and 2,829. `approx_unique` uses a HyperLogLog estimate, which trades exact counting for a compact probabilistic calculation. An estimate can be lower or higher than the real count. I would use `count(DISTINCT user_uuid)` and `count(DISTINCT uuid)` for exact values. [DuckDB documentation](https://duckdb.org/docs/current/sql/functions/aggregates)
+My output returned 40 distinct user identifiers and 3,167 order identifiers, even though the exact counts are 50 and 2,829. `approx_unique` uses a HyperLogLog estimate, which trades exact counting for a compact probabilistic calculation. An estimate can be lower or higher than the real count. I would use `count(DISTINCT user_uuid)` and `count(DISTINCT uuid)` for exact values.
 
 ### What can go wrong with CSV type inference?
 
@@ -24,11 +26,11 @@ I ran the product and monthly aggregations, customer join, age groups, cumulativ
 
 The five exercises use the loaded tables:
 
-1. Average orders per user: **56.58**. Average quantity per order: **3.045245669848003**.
-2. First and last order dates per user, with `date_diff` giving the number of days between them.
-3. Quantity sold by hour, ranked to identify the highest-selling hour.
-4. Monthly quantity per product, with `lag` giving the previous month's quantity for the percentage variation.
-5. Users whose distinct product count equals the number of products in the dataset.
+1. Average orders per user: **56.58**. Average quantity per order: **3.05**.
+2. First and last order dates per user, with `date_diff` giving the number of days between them (50-user result in analytics.txt).
+3. The highest-selling hour is 6h UTC, with a quantity of 385.
+4. Monthly quantity per product, with `lag` giving the previous month's quantity for the percentage variation. For bread: +14.92% in February, +13.54% in March and -19.22% in April.
+5. 45 of the 50 users ordered all six products.
 
 The complete results are in [analytics.txt](duckdb/evidence/analytics.txt).
 
@@ -55,7 +57,7 @@ Each benchmark ran in a new CLI process with the external file cache disabled:
 | Parquet product quantities | 203.5 KiB | 4 | 0.351 s |
 | Parquet count from 2100 | 16.0 KiB | 1 | 0.278 s |
 
-The CSV and Parquet queries returned identical product quantities. CSV downloaded the complete file and parsed the text fields. Parquet read the footer and the compressed chunks for the two requested columns, which greatly reduced the transfer volume. Both network transfer and CSV parsing contribute to the time difference; the S3 timings do not separate them.
+The CSV and Parquet queries returned identical product quantities. CSV downloaded the complete file and parsed the text fields. Parquet read the footer and the compressed chunks for the two requested columns, which greatly reduced the transfer volume. Before running on S3, I ran the same queries on local copies of the files: CSV took 0.225 s and Parquet 0.012 s. Using the local time as a rough baseline, about 0.2 s of the 1.18 s CSV query is local parsing and execution, with the remaining roughly 1 s including the transfer of 28 MiB and request latency. For Parquet, the 0.012 s local time compared with 0.351 s on S3 suggests that network transfer and request latency account for most of the time, with only about 200 KiB downloaded.
 
 The file contained three row groups. The `date >= '2100-01-01'` filter skipped all three because their maximum dates were before 2100, so the query returned zero after reading the footer. The date statistics are in [row-groups.json](duckdb/evidence/row-groups.json).
 

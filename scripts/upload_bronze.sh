@@ -10,7 +10,6 @@ region="$(aws configure get region --profile default)"
 uv run dataset-users -o csv > users.csv
 uv run dataset-orders -o csv > orders.csv
 
-
 kubectl -n "$KUBERNETES_NAMESPACE" create configmap datasets \
   --from-file=users.csv --from-file=orders.csv
 
@@ -28,8 +27,6 @@ aws configure export-credentials --profile default --format env-no-export \
 
 kubectl -n "$KUBERNETES_NAMESPACE" create secret generic s3-credentials \
   --from-env-file="$credential_file"
-
-rm -f "$credential_file"
 
 kubectl -n "$KUBERNETES_NAMESPACE" apply \
   -f infrastructure/job-upload-bronze.yaml

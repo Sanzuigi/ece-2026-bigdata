@@ -1,6 +1,6 @@
 # UV Lab: Python Project and Dataset Generation
 
-Roy Homsi — Big Data Framework
+Roy Homsi, Big Data Framework
 
 [Lab subject](https://github.com/adaltas/ece-bigdata-2026-fall/blob/main/03.object-storage/lab-1-uv.md)
 
@@ -43,7 +43,7 @@ The user command produced two records. The first user's UUID was `bdd640fb-0667-
 
 The order command produced three orders. Its first order referenced `bdd640fb-0667-4ad1-9c80-317fa3b1799d`, with `cookie` as the product and a quantity of 2. This is the link between the two datasets.
 
-I checked the CSV, JSON and JSON Lines outputs, as well as the order bounds, dates and repeated executions. The default commands produced 50 users and 2,829 linked orders. The custom start-date check also passed.
+I also tried the three output formats and ran the commands twice to check they give the same output. With the default arguments, the generators produce 50 users and 2,829 orders.
 
 ## Git
 
