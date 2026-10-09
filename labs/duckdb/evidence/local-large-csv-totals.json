@@ -1,0 +1,8 @@
+[{"product":"bread","sum(quantity)":"127341"},
+{"product":"brioche","sum(quantity)":"126443"},
+{"product":"cookie","sum(quantity)":"125734"},
+{"product":"croissant","sum(quantity)":"125715"},
+{"product":"donut","sum(quantity)":"125979"},
+{"product":"drink","sum(quantity)":"126104"}]
+[90m-- Loading resources from init-local.sql
+[00m

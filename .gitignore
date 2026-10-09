@@ -5,3 +5,12 @@ __pycache__/
 *.csv
 *.bin
 s3.env
+*.duckdb
+*.duckdb.wal
+*.parquet
+init.sql
+init-local.sql
+labs/duckdb/local-bucket/
+duckdb-lab-files.zip
+
+duckdb-local-validation.zip
