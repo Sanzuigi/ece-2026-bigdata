@@ -28,4 +28,4 @@ download = s3.get_object(Bucket=bucket, Key=key)
 with download["Body"] as body:
     if body.read() != data:
         raise RuntimeError("Uploaded data differs from the local file.")
-print("PASS: presigned PUT uploaded identical data")
+print("Uploaded contents match users.csv")

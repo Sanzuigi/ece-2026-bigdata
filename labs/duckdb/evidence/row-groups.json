@@ -1,5 +1,20 @@
-[{"row_group_id":0,"row_group_num_rows":123573,"stats_min":"2020-01-01 00:44:02.671276+00","stats_max":"2034-02-04 20:48:18.716516+00"},
-{"row_group_id":1,"row_group_num_rows":124276,"stats_min":"2034-02-04 21:40:36.580081+00","stats_max":"2048-04-10 00:20:51.481804+00"},
-{"row_group_id":2,"row_group_num_rows":4567,"stats_min":"2048-04-10 01:37:01.674368+00","stats_max":"2048-10-17 07:13:34.97841+00"}]
-[90m-- Loading resources from init.sql
-[00m
+[
+  {
+    "row_group_id": 0,
+    "row_group_num_rows": 123573,
+    "stats_min": "2020-01-01 00:44:02.671276+00",
+    "stats_max": "2034-02-04 20:48:18.716516+00"
+  },
+  {
+    "row_group_id": 1,
+    "row_group_num_rows": 124276,
+    "stats_min": "2034-02-04 21:40:36.580081+00",
+    "stats_max": "2048-04-10 00:20:51.481804+00"
+  },
+  {
+    "row_group_id": 2,
+    "row_group_num_rows": 4567,
+    "stats_min": "2048-04-10 01:37:01.674368+00",
+    "stats_max": "2048-10-17 07:13:34.97841+00"
+  }
+]

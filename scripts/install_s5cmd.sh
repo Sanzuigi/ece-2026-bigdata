@@ -1,24 +1,29 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
-version=$(curl -fsS https://api.github.com/repos/peak/s5cmd/releases/latest \
-  | jq -er '.tag_name | ltrimstr("v")')
-
-case "$(uname -m)" in
-  x86_64) architecture="64bit" ;;
-  aarch64|arm64) architecture="arm64" ;;
-  *) echo "Unsupported architecture"; exit 1 ;;
-esac
-
-filename="s5cmd_${version}_Linux-${architecture}.tar.gz"
-base_url="https://github.com/peak/s5cmd/releases/download/v${version}"
-temporary_directory=$(mktemp -d)
-trap 'rm -rf "$temporary_directory"' EXIT
-
-mkdir -p "$HOME/.local/bin"
-cd "$temporary_directory"
-curl -fsSLO "$base_url/$filename"
-curl -fsSLO "$base_url/s5cmd_checksums.txt"
-grep " ${filename}$" s5cmd_checksums.txt | sha256sum -c
-tar -xzf "$filename" -C "$HOME/.local/bin" s5cmd
-chmod +x "$HOME/.local/bin/s5cmd"
+(
+  set -e
+  S5CMD_VERSION=$(
+    curl -s https://api.github.com/repos/peak/s5cmd/releases/latest \
+    | jq -r '.tag_name | .[1:]'
+  )
+  BIN_DIR=$([[ "$USER" == "root" ]] && echo /usr/local/bin || echo ~/.local/bin)
+  mkdir -p "$BIN_DIR"
+  # Architecture discovery
+  case "$(uname -m)" in
+    x86_64) S5CMD_ARCH="64bit" ;;
+    aarch64|arm64) S5CMD_ARCH="arm64" ;;
+    *) echo "System architecture $(uname -m) not supported."; exit 1 ;;
+  esac
+  # Binary and checksums download
+  S5CMD_FILE="s5cmd_${S5CMD_VERSION}_Linux-${S5CMD_ARCH}.tar.gz"
+  S5CMD_BASE_URL="https://github.com/peak/s5cmd/releases/download/v${S5CMD_VERSION}"
+  TMP_DIR=$(mktemp -d)
+  cd "$TMP_DIR"
+  curl -fsSLO "$S5CMD_BASE_URL/$S5CMD_FILE"
+  curl -fsSLO "$S5CMD_BASE_URL/s5cmd_checksums.txt"
+  # Checksum validation and installation
+  grep " ${S5CMD_FILE}$" s5cmd_checksums.txt | sha256sum -c
+  tar -xf "$S5CMD_FILE" -C "$BIN_DIR" s5cmd
+  chmod +x "$BIN_DIR/s5cmd"
+  # Cleanup
+  rm -rf "$TMP_DIR"
+)

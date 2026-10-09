@@ -5,6 +5,7 @@ from faker import Faker
 from .serialize import serialize
 
 fake = Faker()
+# Generate the same dataset on every execution
 Faker.seed(42)
 
 
@@ -18,21 +19,18 @@ def users_generate(count=50, output=""):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        prog="dataset-users", description="Users generator"
+    parser = argparse.ArgumentParser(prog="dataset-users", description="Users generator")
+    parser.add_argument(
+        "-c", "--count", help="Number of users to generate.", type=int, default=50
     )
     parser.add_argument(
-        "-c", "--count", type=int, default=50,
-        help="Number of users to generate."
-    )
-    parser.add_argument(
-        "-o", "--output", default="json",
+        "-o",
+        "--output",
+        help="Output format.",
+        default="json",
         choices=["csv", "json", "jsonline"],
-        help="Output format."
     )
     args = parser.parse_args()
-    if args.count < 0:
-        parser.error("--count must be non-negative")
     users_generate(args.count, args.output)
 
 
