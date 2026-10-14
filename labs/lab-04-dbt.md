@@ -20,9 +20,9 @@ The users model standardizes names, email and sex, then separates street, city, 
 
 Generic tests check identifiers, email, sex, state references, allowed quantities and products, and the order-to-user relationship. Singular tests check orphan orders, positive quantities, normalized usernames, birthdate cleaning and ZIP/state consistency. Each singular test returns violating rows, so an empty result means success.
 
-The initial birthdate test is run before the exercise changes. Its failing rows are stored and the compiled SQL is retained. A second run demonstrates `severity='warn'`. The final exercise cleans the birthdates and restores error severity, so the final birthdate test must pass rather than merely warn.
+I ran the initial birthdate test before the exercise changes: it failed on 288 orders. A second run demonstrates `severity='warn'`. The final exercise cleans the birthdates and restores error severity, so the final birthdate test must pass rather than merely warn.
 
-Execution logs, dbt run results, SQL and inspection results are stored in [dbt/evidence](dbt/evidence/). The runner is [run_dbt_lab.py](../scripts/run_dbt_lab.py).
+The main dbt outputs (birthdate warning, lineage, final build, table experiment, Parquet export listing and ZIP check summary) are stored in [dbt/evidence](dbt/evidence/).
 
 ## Questions
 
@@ -70,13 +70,13 @@ For production, I would obtain an approved USPS mapping or a maintained postal r
 
 ### 5. View/table experiment
 
-The runner temporarily changes silver to tables, builds them and checks both outputs against saved view results with bidirectional `EXCEPT ALL`. It records the catalog and build timings, then restores views and builds again.
+I temporarily changed silver to tables, built them and checked both outputs against the saved view results with `EXCEPT ALL` in both directions. I then restored the views and built again.
 
 Views store the query in the DuckDB database and execute transformations at read time. A table stores the transformed rows in that database, uses more storage and avoids rereading the CSVs for each query. A source change appears on the next view query, while a table keeps its earlier snapshot until rebuilt. Build timing alone is not a general performance benchmark because cache and network conditions vary.
 
 ## Parquet and documentation
 
-Users and orders are exported to `silver/dbt/users.parquet` and `silver/dbt/orders.parquet` in the existing bucket. Each exported file is compared with its silver relation using `EXCEPT ALL` in both directions, preserving duplicate multiplicity as well as values. Direct Parquet aggregations and the object listing are retained as evidence.
+Users and orders are exported to `silver/dbt/users.parquet` and `silver/dbt/orders.parquet` in the existing bucket. Each exported file is compared with its silver relation using `EXCEPT ALL` in both directions, preserving duplicate multiplicity as well as values. The object listing is retained as evidence.
 
 Static documentation is generated with `uv run dbt docs generate --static`. The resulting `lab_medallion/target/static_index.html` contains the model descriptions, tests and lineage. `source()` identifies an external bronze dataset; `ref()` identifies a dbt resource and creates a dependency edge.
 

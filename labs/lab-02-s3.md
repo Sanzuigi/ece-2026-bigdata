@@ -76,7 +76,7 @@ The files totalled 338,919 bytes, below the 1 MiB ConfigMap limit.
 
 The first Job could not create a Pod because the quota required `limits.cpu`. I added a `200m` CPU limit and recreated it. The Job then completed. The manifest requests `100m` CPU and `128Mi` memory, with limits of `200m` and `256Mi`, and uses `amazon/aws-cli:latest`.
 
-I downloaded and compared the uploaded datasets:
+I downloaded and compared the uploaded datasets with `scripts/verify_bronze.py`:
 
 | Object | Size | Records |
 |---|---:|---:|

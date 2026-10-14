@@ -52,5 +52,3 @@ uv run dbt docs generate --static
 ```
 
 The static documentation is `lab_medallion/target/static_index.html`. Model files, tests and reference provenance are in [lab_medallion](lab_medallion/); execution evidence is in [labs/dbt/evidence](labs/dbt/evidence/). The ZIP/state test reports synthetic address issues as a warning. Birthdate cleaning and the other validation tests must pass.
-
-To reproduce the complete lab demonstration, including the initial birthdate failure, its warning stage, the exercises, materialization comparison and verified S3 exports, run `uv run python scripts/run_dbt_lab.py` from the repository root. This replaces the lab's silver exports and execution evidence while keeping bronze unchanged.

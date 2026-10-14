@@ -21,4 +21,4 @@ The final silver build passed 25 resources with one warning and zero errors. The
 
 The complete write-up and answers are in [the dbt lab report](../labs/lab-04-dbt.md). Real execution outputs are in [evidence](../labs/dbt/evidence/). Reference provenance and limitations are documented in [reference-data.md](reference-data.md).
 
-Static documentation is generated at `target/static_index.html`. This generated directory and the database are excluded from Git. The complete demonstration can be repeated from the repository root with `uv run python scripts/run_dbt_lab.py`; it also checks table/view equality and exports users and orders to `s3://$LAB_BUCKET_NAME/silver/dbt/`.
+Static documentation is generated at `target/static_index.html`. This generated directory and the database are excluded from Git.

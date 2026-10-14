@@ -1,8 +1,0 @@
-[
-  {
-    "users": 50,
-    "orders": 2829,
-    "invalid_birthdate_users": 5,
-    "null_birthdates": 5
-  }
-]
