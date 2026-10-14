@@ -1,0 +1,14 @@
+version: 2
+seeds:
+  - name: states
+    description: US state, territory and military postal abbreviations (USPS Publication 28 Appendix B).
+    columns:
+      - name: code
+        data_tests: [unique, not_null]
+  - name: zip_states
+    description: Distinct five-digit ZIP/state pairs from the GeoNames US postal snapshot; see reference-data.md.
+    columns:
+      - name: zip_code
+        data_tests: [not_null]
+      - name: state
+        data_tests: [not_null]

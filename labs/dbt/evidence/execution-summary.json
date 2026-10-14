@@ -1,0 +1,64 @@
+{
+  "01-debug": {
+    "exit_code": 0,
+    "seconds": 4.111
+  },
+  "02-seeds": {
+    "exit_code": 0,
+    "seconds": 11.021
+  },
+  "03-baseline-silver": {
+    "exit_code": 0,
+    "seconds": 6.632
+  },
+  "04-bronze-preview": {
+    "exit_code": 0,
+    "seconds": 6.168
+  },
+  "05-baseline-tests": {
+    "exit_code": 1,
+    "seconds": 10.776
+  },
+  "06-birthdate-warning": {
+    "exit_code": 0,
+    "seconds": 10.042
+  },
+  "07-final-build": {
+    "exit_code": 0,
+    "seconds": 16.122
+  },
+  "08-lineage-orders": {
+    "exit_code": 0,
+    "seconds": 4.899
+  },
+  "09-lineage-users": {
+    "exit_code": 0,
+    "seconds": 4.874
+  },
+  "10-final-silver-build": {
+    "exit_code": 0,
+    "seconds": 13.628
+  },
+  "11-table-build": {
+    "exit_code": 0,
+    "seconds": 13.983
+  },
+  "12-restored-view-build": {
+    "exit_code": 0,
+    "seconds": 43.066
+  },
+  "export-users": {
+    "uri": "s3://user-r-homsi-ece/silver/dbt/users.parquet",
+    "different_rows": 0,
+    "rows": 50
+  },
+  "export-orders": {
+    "uri": "s3://user-r-homsi-ece/silver/dbt/orders.parquet",
+    "different_rows": 0,
+    "rows": 2829
+  },
+  "13-docs": {
+    "exit_code": 0,
+    "seconds": 7.843
+  }
+}

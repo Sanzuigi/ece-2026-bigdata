@@ -1,0 +1,75 @@
+[0m10:22:32  Running with dbt=1.12.5
+[0m10:22:32  Registered adapter: duckdb=1.11.0
+[0m10:22:33  Unable to do partial parsing because a project config has changed
+[0m10:22:38  Found 2 models, 28 data tests, 2 seeds, 2 sources, 500 macros
+[0m10:22:38
+[0m10:22:38  Concurrency: 4 threads (target='dev')
+[0m10:22:38
+[0m10:22:38  1 of 26 START sql table model main_silver.stg_orders ........................... [RUN]
+[0m10:22:39  1 of 26 OK created sql table model main_silver.stg_orders ...................... [[32mOK[0m in 0.65s]
+[0m10:22:39  4 of 26 START test assert_quantity_positive .................................... [RUN]
+[0m10:22:39  5 of 26 START test not_null_stg_orders_order_id ................................ [RUN]
+[0m10:22:39  2 of 26 START test accepted_values_stg_orders_product__bread__brioche__cookie__croissant__donut__drink  [RUN]
+[0m10:22:39  3 of 26 START test accepted_values_stg_orders_quantity__False__1__2__3__4__5 ... [RUN]
+[0m10:22:39  4 of 26 PASS assert_quantity_positive .......................................... [[32mPASS[0m in 0.62s]
+[0m10:22:40  5 of 26 PASS not_null_stg_orders_order_id ...................................... [[32mPASS[0m in 0.64s]
+[0m10:22:40  6 of 26 START test not_null_stg_orders_product ................................. [RUN]
+[0m10:22:40  7 of 26 START test not_null_stg_orders_quantity ................................ [RUN]
+[0m10:22:40  2 of 26 PASS accepted_values_stg_orders_product__bread__brioche__cookie__croissant__donut__drink  [[32mPASS[0m in 0.68s]
+[0m10:22:40  8 of 26 START test not_null_stg_orders_user_id ................................. [RUN]
+[0m10:22:40  3 of 26 PASS accepted_values_stg_orders_quantity__False__1__2__3__4__5 ......... [[32mPASS[0m in 0.77s]
+[0m10:22:40  9 of 26 START test unique_stg_orders_order_id .................................. [RUN]
+[0m10:22:40  6 of 26 PASS not_null_stg_orders_product ....................................... [[32mPASS[0m in 0.36s]
+[0m10:22:40  7 of 26 PASS not_null_stg_orders_quantity ...................................... [[32mPASS[0m in 0.36s]
+[0m10:22:40  8 of 26 PASS not_null_stg_orders_user_id ....................................... [[32mPASS[0m in 0.29s]
+[0m10:22:40  9 of 26 PASS unique_stg_orders_order_id ........................................ [[32mPASS[0m in 0.24s]
+[0m10:22:40  10 of 26 START sql table model main_silver.stg_users ........................... [RUN]
+[0m10:22:40  10 of 26 OK created sql table model main_silver.stg_users ...................... [[32mOK[0m in 0.17s]
+[0m10:22:40  14 of 26 START test assert_orders_after_user_birth ............................. [RUN]
+[0m10:22:40  11 of 26 START test accepted_values_stg_users_birthdate_is_valid__False__True__False  [RUN]
+[0m10:22:40  13 of 26 START test assert_birthdate_cleaning .................................. [RUN]
+[0m10:22:40  12 of 26 START test accepted_values_stg_users_sex__F__M ........................ [RUN]
+[0m10:22:41  14 of 26 PASS assert_orders_after_user_birth ................................... [[32mPASS[0m in 0.35s]
+[0m10:22:41  15 of 26 START test assert_orders_have_users ................................... [RUN]
+[0m10:22:41  13 of 26 PASS assert_birthdate_cleaning ........................................ [[32mPASS[0m in 0.37s]
+[0m10:22:41  12 of 26 PASS accepted_values_stg_users_sex__F__M .............................. [[32mPASS[0m in 0.38s]
+[0m10:22:41  11 of 26 PASS accepted_values_stg_users_birthdate_is_valid__False__True__False . [[32mPASS[0m in 0.40s]
+[0m10:22:41  16 of 26 START test assert_username_normalized ................................. [RUN]
+[0m10:22:41  17 of 26 START test assert_zip_matches_state ................................... [RUN]
+[0m10:22:41  18 of 26 START test not_null_stg_users_birthdate_is_valid ...................... [RUN]
+[0m10:22:41  16 of 26 PASS assert_username_normalized ....................................... [[32mPASS[0m in 0.34s]
+[0m10:22:41  15 of 26 PASS assert_orders_have_users ......................................... [[32mPASS[0m in 0.42s]
+[0m10:22:41  18 of 26 PASS not_null_stg_users_birthdate_is_valid ............................ [[32mPASS[0m in 0.34s]
+[0m10:22:41  19 of 26 START test not_null_stg_users_email ................................... [RUN]
+[0m10:22:41  21 of 26 START test not_null_stg_users_user_id ................................. [RUN]
+[0m10:22:41  20 of 26 START test not_null_stg_users_state ................................... [RUN]
+[0m10:22:41  19 of 26 PASS not_null_stg_users_email ......................................... [[32mPASS[0m in 0.33s]
+[0m10:22:41  21 of 26 PASS not_null_stg_users_user_id ....................................... [[32mPASS[0m in 0.33s]
+[0m10:22:41  17 of 26 WARN 43 assert_zip_matches_state ...................................... [[33mWARN 43[0m in 0.74s]
+[0m10:22:41  22 of 26 START test not_null_stg_users_username_normalized ..................... [RUN]
+[0m10:22:41  23 of 26 START test relationships_stg_orders_user_id__user_id__ref_stg_users_ .. [RUN]
+[0m10:22:41  20 of 26 PASS not_null_stg_users_state ......................................... [[32mPASS[0m in 0.37s]
+[0m10:22:41  24 of 26 START test relationships_stg_users_state__code__ref_states_ ........... [RUN]
+[0m10:22:42  25 of 26 START test unique_stg_users_email ..................................... [RUN]
+[0m10:22:42  23 of 26 PASS relationships_stg_orders_user_id__user_id__ref_stg_users_ ........ [[32mPASS[0m in 0.43s]
+[0m10:22:42  26 of 26 START test unique_stg_users_user_id ................................... [RUN]
+[0m10:22:42  22 of 26 PASS not_null_stg_users_username_normalized ........................... [[32mPASS[0m in 0.47s]
+[0m10:22:42  25 of 26 PASS unique_stg_users_email ........................................... [[32mPASS[0m in 0.33s]
+[0m10:22:42  24 of 26 PASS relationships_stg_users_state__code__ref_states_ ................. [[32mPASS[0m in 0.40s]
+[0m10:22:42  26 of 26 PASS unique_stg_users_user_id ......................................... [[32mPASS[0m in 0.09s]
+[0m10:22:42
+[0m10:22:42  Finished running 2 table models, 24 data tests in 0 hours 0 minutes and 4.41 seconds (4.41s).
+[0m10:22:42
+[0m10:22:42  [33mCompleted with 1 warning:[0m
+[0m10:22:42
+[0m10:22:42  [[33mWARNING[0m]: in test assert_zip_matches_state (tests/assert_zip_matches_state.sql)
+[0m10:22:42  [[33mWARNING[0m]: Got 43 results, configured to warn if != 0
+[0m10:22:42
+[0m10:22:42    compiled code at target/compiled/lab_medallion/tests/assert_zip_matches_state.sql
+[0m10:22:42
+[0m10:22:42    See test failures:
+  -------------------------------------------------------------------------------
+  select * from "lab_medallion"."main_dbt_test__audit"."assert_zip_matches_state"
+  -------------------------------------------------------------------------------
+[0m10:22:42
+[0m10:22:42  Done. PASS=25 WARN=1 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=26

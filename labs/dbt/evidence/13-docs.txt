@@ -1,0 +1,8 @@
+[0m10:23:32  Running with dbt=1.12.5
+[0m10:23:32  Registered adapter: duckdb=1.11.0
+[0m10:23:33  Found 2 models, 28 data tests, 2 seeds, 2 sources, 500 macros
+[0m10:23:33
+[0m10:23:33  Concurrency: 4 threads (target='dev')
+[0m10:23:33
+[0m10:23:36  Building catalog
+[0m10:23:36  Catalog written to /home/onyxia/work/ece-2026-bigdata/lab_medallion/target/catalog.json

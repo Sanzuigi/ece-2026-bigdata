@@ -9,3 +9,8 @@ s3.env
 *.duckdb.wal
 *.parquet
 init.sql
+
+target/
+dbt_packages/
+logs/
+!lab_medallion/seeds/*.csv

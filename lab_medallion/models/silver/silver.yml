@@ -1,0 +1,64 @@
+version: 2
+models:
+  - name: stg_users
+    description: Typed users with cleaned text and parsed addresses.
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]
+      - name: username_normalized
+        description: Username trimmed and converted to lowercase.
+        data_tests: [not_null]
+      - name: birthdate_original
+        description: Original source birthdate, retained for audit.
+      - name: birthdate
+        description: NULL when the original birthdate is after the user's first order.
+      - name: birthdate_is_valid
+        description: Whether a known original birthdate is consistent with the first order; users without orders have no order contradiction.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+                quote: false
+      - name: email
+        data_tests: [unique, not_null]
+      - name: sex
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [F, M]
+      - name: state
+        description: State, territory or military postal code.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('states')
+                field: code
+      - name: zip_code
+        description: Postal code retained as text to preserve leading zeros.
+  - name: stg_orders
+    description: Typed orders, deduplicated on order_id using the latest timestamp.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: user_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_users')
+                field: user_id
+      - name: quantity
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+                quote: false
+      - name: product
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [bread, brioche, cookie, croissant, donut, drink]

@@ -1,0 +1,10 @@
+[
+  {
+    "issue": "state_zip_mismatch",
+    "users": 18
+  },
+  {
+    "issue": "unknown_zip_in_reference",
+    "users": 25
+  }
+]

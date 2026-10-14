@@ -2,13 +2,14 @@
 
 Roy Homsi, ECE Paris
 
-This project contains my work for the uv, S3 and DuckDB labs. I generated fictional users and orders in Python, uploaded them to the bronze layer in S3, then used DuckDB to query the data and compare CSV with Parquet.
+This project contains my work for the uv, S3, DuckDB and dbt labs. I generated fictional users and orders in Python, uploaded them to the bronze layer in S3, then used DuckDB to query the data and compare CSV with Parquet. The dbt project builds and validates the silver layer and exports it to Parquet.
 
 ## Labs
 
 - [uv: Python project and dataset generation](labs/lab-01-uv.md)
 - [S3: object storage and Kubernetes ingestion](labs/lab-02-s3.md)
 - [DuckDB: SQL analytics and Parquet](labs/lab-03-duckdb.md)
+- [dbt: bronze to silver, data tests and Parquet exports](labs/lab-04-dbt.md)
 
 ## Usage
 
@@ -39,3 +40,17 @@ export LAB_BUCKET_NAME="$KUBERNETES_NAMESPACE"
 uv run orders-report
 uv run orders-report -p cookie
 ```
+
+The dbt project uses the same bucket and DuckDB S3 secret. After loading its reference seeds, build the silver models and generate the documentation:
+
+```bash
+export LAB_BUCKET_NAME="$KUBERNETES_NAMESPACE"
+cd lab_medallion
+uv run dbt seed
+uv run dbt build --select silver
+uv run dbt docs generate --static
+```
+
+The static documentation is `lab_medallion/target/static_index.html`. Model files, tests and reference provenance are in [lab_medallion](lab_medallion/); execution evidence is in [labs/dbt/evidence](labs/dbt/evidence/). The ZIP/state test reports synthetic address issues as a warning. Birthdate cleaning and the other validation tests must pass.
+
+To reproduce the complete lab demonstration, including the initial birthdate failure, its warning stage, the exercises, materialization comparison and verified S3 exports, run `uv run python scripts/run_dbt_lab.py` from the repository root. This replaces the lab's silver exports and execution evidence while keeping bronze unchanged.
