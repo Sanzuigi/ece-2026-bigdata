@@ -1,7 +1,7 @@
 """Bronze-to-silver DataFrame lab and all four exercises.
 
-Run with spark-submit and the Iceberg runtime matching Spark/Scala.
-S3 credentials are read from the default shared profile, never embedded.
+Spark 4.1.1, Scala 2.13 and Iceberg 1.11.0 in the Onyxia service.
+S3 credentials are read from the default shared profile.
 """
 # %% Session with S3A and an Iceberg Hadoop catalog
 import configparser

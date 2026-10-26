@@ -8,7 +8,7 @@ Roy Homsi, Big Data Framework
 
 I used the existing Onyxia repository and bronze datasets. The service was increased from 2 CPU cores and 2,000 MiB of memory to the lab's required limits of 4 cores and 4,000 MiB, within the namespace quota. The runtime is Spark 4.1.1 with Scala 2.13, so the matching Iceberg package is `org.apache.iceberg:iceberg-spark-runtime-4.1_2.13:1.11.0`.
 
-[dataframe_lab.py](spark/dataframe_lab.py) contains the lab and all four exercises as separate cells. It can also be run from the repository root:
+[dataframe_lab.py](spark/dataframe_lab.py) contains the transformations and all four exercises as separate cells. I executed it from the repository root with the following command:
 
 ```bash
 export LAB_BUCKET_NAME="$KUBERNETES_NAMESPACE"
@@ -26,11 +26,11 @@ Restarting the service kills a job running in its local JVM. A new session is ne
 
 I read the two bronze CSVs through S3A with explicit schemas and `multiLine=True`. This avoids inference depending on a small sample and correctly reconstructs the multiline user addresses. Dates, quantities and timestamps are cast during staging, and the SQL session timezone is UTC.
 
-The user transformation normalizes text and splits street, city, state and ZIP. A military address has no city, so a failed city match becomes NULL rather than an empty string. The state and ZIP extractions can also return empty strings on malformed addresses. Without validation, an empty state could form its own aggregate group or fail a lookup, and an empty ZIP could be counted as a populated value by `count(zip_code)`.
+For users, I normalized the text and separated the street, city, state and ZIP. A military address has no city, which means the failed city match needs to become NULL instead of remaining an empty string. The same issue can affect the state and ZIP extractions on malformed addresses, with an empty state forming its own aggregate group or failing a lookup, and an empty ZIP being counted as a populated value by `count(zip_code)`.
 
 For orders, I append three duplicate rows to a temporary DataFrame, then use a window partitioned by order identifier and ordered by descending timestamp. I implement the same deduplication in SQL. Both results are compared with `exceptAll()` in both directions, which checks values and duplicate multiplicities rather than just counts and column names. The bronze files remain unchanged.
 
-The state aggregation counts users per state and counts the users whose city is NULL. It checks that the military-address case remains visible instead of being silently grouped under an empty string. SQL is convenient for a one-off exploration and is easy for SQL analysts to review. A DataFrame model fits a Python pipeline with reusable functions; SQL can also be a shared model when the team maintains SQL files. The team's skills and conventions matter more than the API alone.
+The state aggregation counted the users in each state and those whose city was NULL, which kept the military-address case visible. I would choose SQL for a one-off exploration because the query directly expresses the grouping and is familiar to SQL analysts. For a model reused in a Python pipeline, I would use the DataFrame API with reusable functions, although a team maintaining SQL files could also share the SQL model. The choice therefore depends on how the colleagues work as well as the API itself.
 
 ## Parquet output
 
@@ -42,7 +42,7 @@ Reading back both exports and comparing them to their source DataFrames verifies
 
 ## Iceberg
 
-I wrote `lab.silver.users` and `lab.silver.orders`, queried their `snapshots` and `files` metadata tables, and compared the data read through the catalog with the DataFrames. Parquet files hold the records. The metadata JSON records the schema and snapshot references, while the Avro manifests describe data files and their membership in a snapshot. The Hadoop catalog also uses a version-hint file to locate the current metadata version.
+I wrote `lab.silver.users` and `lab.silver.orders`, queried their `snapshots` and `files` metadata tables, then compared the data read through the catalog with the DataFrames. The Parquet files contain the records, while the metadata JSON stores the schema and snapshot references, with the Avro manifests describing which data files belong to a snapshot. The Hadoop catalog also uses a version-hint file to locate the current metadata version.
 
 An Iceberg write stages new files and commits a new snapshot. Readers use a consistent snapshot instead of watching an in-place directory replacement. This protection still depends on a catalog and storage implementation with the required commit guarantees. With a Hadoop catalog on an object store, concurrent updates can race if the metadata-pointer update does not have suitable atomicity or locking. A catalog service can coordinate conditional commits, reject a stale update and support retries.
 
@@ -77,26 +77,26 @@ For a 10 GB daily batch, I would first consider dbt with DuckDB if it fits the m
 
 ### 1. Birthdate validity
 
-I find the earliest order per user and join it to the user data. `birthdate_is_valid` is false when the original birthdate is later than that date. The original value is kept as `birthdate_original`, and the cleaned `birthdate` becomes NULL when invalid. A known birthdate with no order has no order-date contradiction. An unknown birthdate is marked invalid.
+I found the earliest order per user and joined it to the user data, which allowed me to compare each original birthdate with the first order date. `birthdate_is_valid` is false when the birthdate is later, with the original value kept as `birthdate_original` and the cleaned `birthdate` set to NULL. A known birthdate without an order has no order-date contradiction, whereas an unknown birthdate is marked invalid.
 
 The DataFrame and SQL implementations agree in both directions. I also include `username_normalized`, matching the earlier dbt exercise, so the final silver output can be compared with that completed model without dropping its extra columns.
 
 ### 2. ZIP extraction timings
 
-I implement extraction with the native expression, a plain Python UDF and a Pandas UDF. All three run on the complete 50-user DataFrame and return the same ZIP values. I use `timeit.repeat()` with three repetitions, the same timing approach available through IPython's `%%timeit`, after an initial evaluation.
+I implemented ZIP extraction with the native expression, a plain Python UDF and a Pandas UDF, with all three returning the same values for the complete 50-user DataFrame. After an initial evaluation, I measured three repetitions with `timeit.repeat()`, using the timing mechanism behind IPython's `%%timeit` without an interactive notebook.
 
 The measured action sums the lengths of the extracted ZIPs, forcing the expression to execute. A plain `count()` could be optimized without evaluating the new column. The evidence records the actual samples. Fifty rows are too few to establish a general ranking: Python-worker startup, Arrow batches and scheduling can dominate. Native expressions remain preferable when they express the rule, because Spark can optimize them without crossing the Python boundary.
 
 ### 3. Cache and Spark UI
 
-Both bronze DataFrames are cached and materialized with an action. Repeated counts and Storage metrics are recorded, and the live Spark UI is inspected while the application runs. Cached partitions let subsequent stages reuse the parsed input instead of reading and parsing the S3 CSVs again. A new session or evicted cache blocks still requires recomputation. Caching consumes executor memory and should be released when the input is no longer reused.
+I cached both bronze DataFrames and materialized them with an action, then recorded repeated counts and inspected the Storage tab while the application was running. The cached partitions allowed later stages to reuse the parsed input instead of reading and parsing the S3 CSVs again. This also occupied executor memory, which is why I released the cache after the final use. A new session or an evicted block would still require recomputation.
 
 ### 4. Append and time travel
 
-I save the original orders snapshot ID, append one order with a new identifier, and verify that the current Iceberg table has one extra row. `VERSION AS OF` reads the original snapshot and agrees with the pre-append DataFrame. The snapshot listing shows both commits.
+I saved the original orders snapshot ID, appended one order with a new identifier and checked that the current Iceberg table had one extra row. Reading the original snapshot with `VERSION AS OF` returned the same records as the pre-append DataFrame, with both commits visible in the snapshot listing.
 
 Appending the same row to the Parquet directory also adds one record, but there is no snapshot ID or equivalent `VERSION AS OF` for that directory. Recovering the earlier dataset would require maintaining separate paths or using external versioning and a manifest. After the experiment, I restore the Parquet baseline and roll the Iceberg table back to the original snapshot. The append snapshot remains part of the table history.
 
 ## Evidence and cleanup
 
-The [DataFrame execution output](spark/evidence/dataframe-results.txt), [S3 object listing](spark/evidence/s3-outputs.txt) and engine comparison retain the main results. The source and reports are committed separately from generated runtime files. Bronze data and the earlier dbt lab are preserved, cached inputs are released, and the Spark session is stopped.
+The [DataFrame execution output](spark/evidence/dataframe-results.txt), [S3 object listing](spark/evidence/s3-outputs.txt) and engine comparison contain the measured results. I preserved the bronze data and the earlier dbt outputs, released both cached inputs and stopped the Spark session after completing the exercises.

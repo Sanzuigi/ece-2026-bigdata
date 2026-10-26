@@ -1,15 +1,3 @@
-   Building ece-2026-bigdata @ file:///home/onyxia/work/ece-2026-bigdata
-      Built ece-2026-bigdata @ file:///home/onyxia/work/ece-2026-bigdata
-Uninstalled 1 package in 2ms
-Installed 1 package in 10ms
-['Count']
-
-['Count']
-
-['Count']
-
-['Count']
-
 ['engine', 'orders', 'quantity']
 ('dbt', 2829, 8615)
 ('spark', 2829, 8615)

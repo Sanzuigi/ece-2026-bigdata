@@ -6,7 +6,7 @@ Roy Homsi, Big Data Framework
 
 ## Environment and execution
 
-I used the existing Onyxia project, downloaded the two bronze CSVs with the default AWS profile and ran [rdd_lab.py](spark/rdd_lab.py) with Spark 4.1.1. The source is divided into cells so each part can also be explored in VS Code. Results are in [rdd-results.txt](spark/evidence/rdd-results.txt).
+I used the existing Onyxia project, downloaded the two bronze CSVs with the default AWS profile and ran [rdd_lab.py](spark/rdd_lab.py) with Spark 4.1.1. The source contains the transformations and all four exercises, with the execution results recorded in [rdd-results.txt](spark/evidence/rdd-results.txt). I used the following commands for the download and execution:
 
 ```bash
 export LAB_BUCKET_NAME="$KUBERNETES_NAMESPACE"
@@ -29,7 +29,7 @@ The users file contains 50 records, but each address contains a newline. `textFi
 
 Splitting orders on commas is sufficient for these generated records. An extra comma inside a product would produce too many values to unpack and fail when an action evaluates that row. Spark's CSV reader instead applies quoting, the chosen schema and its malformed-record policy. A DataFrame is also lazy, so data errors may surface during execution; schema inference can itself cause an earlier scan. `FAILFAST` would reject malformed input rather than silently accepting the permissive default.
 
-Both aggregations returned the same quantities for 50 users, totalling 8,615. I inspected the completed stages in the live Spark UI. The `reduceByKey` shuffle wrote 2,513 bytes, while `groupByKey` wrote 6,230 bytes. The first combines quantities within each input partition before transferring partial sums. The second transfers the individual quantities and groups them afterwards. Timing on this small dataset includes scheduling overhead and is not a useful general speed benchmark.
+Both aggregations returned the same quantities for 50 users, totalling 8,615. In the completed stages of the Spark UI, I found that the `reduceByKey` shuffle wrote 2,513 bytes, compared with 6,230 bytes for `groupByKey`. This difference comes from `reduceByKey` combining quantities within each input partition before transferring the partial sums, whereas `groupByKey` transfers the individual quantities and groups them afterwards. Even though the shuffle difference is visible, the dataset is too small to use the timings as a general speed comparison, since scheduling overhead also affects them.
 
 Some operations need the values themselves, such as preserving every observation for arbitrary per-key processing. `groupByKey` can express that. A mean does not require it: a count and sum can be combined. Even some more complex statistics have specialized mergeable summaries, so grouping every value should not be the default choice.
 
@@ -45,7 +45,7 @@ A left outer join retains orders whose user is missing and supplies `None` for t
 
 ### 1. Count, total and average per user
 
-`aggregateByKey` starts from `(0, 0)`. Its sequence function adds one to the count and the order's quantity to the sum. Its combiner adds two partial counts and sums. Dividing the final sum by its count gives the average order quantity for each user. The evidence contains all 50 aggregate rows, and the quantities agree with the earlier `reduceByKey` result.
+I used `aggregateByKey` with `(0, 0)` as its starting value, with the sequence function adding one to the count and the order's quantity to the sum. The combiner then adds the partial counts and sums from different partitions, which gives the average order quantity when the final sum is divided by the count. The evidence contains all 50 aggregate rows, and the quantities agree with the earlier `reduceByKey` result.
 
 ### 2. Missing user
 
@@ -65,4 +65,4 @@ The timings are retained in the evidence rather than replaced by a single claime
 
 ## Completion
 
-All four exercises ran successfully. The live Spark UI showed completed jobs and no failed job. I stopped the session after inspecting the stages and storage. The temporary local CSVs are excluded from Git and removed after the Spark work.
+All four exercises ran successfully, and the live Spark UI showed completed jobs without a failed job. I stopped the session after inspecting the stages and storage, then removed the temporary local CSVs once the Spark work was complete. The bronze objects remained in S3.

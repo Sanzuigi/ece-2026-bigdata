@@ -2,7 +2,7 @@
 
 This project reads the original S3 CSV datasets and builds `main_silver.stg_orders` and `main_silver.stg_users` as DuckDB views. It includes all five exercises from the current course subject.
 
-Run in the existing Onyxia uv project:
+I built the project in the existing Onyxia uv environment with the following commands:
 
 ```bash
 export LAB_BUCKET_NAME="$KUBERNETES_NAMESPACE"
@@ -13,7 +13,7 @@ uv run dbt build --select silver
 uv run dbt docs generate --static
 ```
 
-The profile contains no credentials. DuckDB loads the user's persistent `s3_onyxia_connection` secret. If AWS CLI works but a model cannot read S3, check that secret's current credentials.
+The profile contains no credentials, since DuckDB reads S3 through the persistent `s3_onyxia_connection` secret in the Onyxia home directory. I refreshed that secret from the default AWS profile before running the models.
 
 The final lineage is `bronze.orders → stg_orders → stg_users`, with `bronze.users → stg_users`. The users model needs order dates to validate birthdates. Tests also reference the state and ZIP reference seeds.
 

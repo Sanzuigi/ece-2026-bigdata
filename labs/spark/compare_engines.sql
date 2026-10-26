@@ -1,4 +1,5 @@
--- Set the DuckDB session variable bucket to s3://<your bucket> before reading.
+-- Comparison of the dbt and Spark silver outputs in the lab bucket.
+SET VARIABLE bucket = 's3://user-r-homsi-ece';
 CREATE OR REPLACE VIEW dbt_orders AS
 SELECT cast(order_id AS varchar) AS order_id,
        cast(user_id AS varchar) AS user_id,

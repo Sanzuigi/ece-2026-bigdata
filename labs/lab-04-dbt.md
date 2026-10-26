@@ -20,7 +20,7 @@ The users model standardizes names, email and sex, then separates street, city, 
 
 Generic tests check identifiers, email, sex, state references, allowed quantities and products, and the order-to-user relationship. Singular tests check orphan orders, positive quantities, normalized usernames, birthdate cleaning and ZIP/state consistency. Each singular test returns violating rows, so an empty result means success.
 
-I ran the initial birthdate test before the exercise changes: it failed on 288 orders. A second run demonstrates `severity='warn'`. The final exercise cleans the birthdates and restores error severity, so the final birthdate test must pass rather than merely warn.
+I ran the initial birthdate test before the exercise changes: it failed on 288 orders. A second run demonstrated `severity='warn'`. In the final exercise, I cleaned the birthdates and restored error severity, which made the final birthdate test pass without a warning.
 
 The main dbt outputs (birthdate warning, lineage, final build, table experiment, Parquet export listing and ZIP check summary) are stored in [dbt/evidence](dbt/evidence/).
 

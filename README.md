@@ -15,7 +15,7 @@ This project contains my work for the uv, S3, DuckDB, dbt, Spark RDD and Spark D
 
 ## Usage
 
-The project uses Python 3.13 and uv. Dependencies are recorded in `uv.lock`.
+I used Python 3.13 and uv, with the dependencies recorded in `uv.lock`. The following commands show the help output and the small datasets used to check the generators:
 
 ```bash
 uv sync --locked
@@ -43,7 +43,7 @@ uv run orders-report
 uv run orders-report -p cookie
 ```
 
-The dbt project uses the same bucket and DuckDB S3 secret. After loading its reference seeds, build the silver models and generate the documentation:
+For dbt, I used the same bucket and DuckDB S3 secret. I loaded the reference seeds, built the silver models and generated the documentation with these commands:
 
 ```bash
 export LAB_BUCKET_NAME="$KUBERNETES_NAMESPACE"
@@ -53,6 +53,6 @@ uv run dbt build --select silver
 uv run dbt docs generate --static
 ```
 
-The static documentation is `lab_medallion/target/static_index.html`. Model files, tests and reference provenance are in [lab_medallion](lab_medallion/); execution evidence is in [labs/dbt/evidence](labs/dbt/evidence/). The ZIP/state test reports synthetic address issues as a warning. Birthdate cleaning and the other validation tests must pass.
+The static documentation was generated at `lab_medallion/target/static_index.html`. Model files, tests and reference provenance are in [lab_medallion](lab_medallion/), with the execution results in [labs/dbt/evidence](labs/dbt/evidence/). The final build passed 25 resources and returned one warning for the synthetic ZIP/state combinations, with birthdate validation passing after the cleaning exercise.
 
-The Spark lab sources are in [labs/spark](labs/spark/), with cells marked by `# %%`. Run them with the Spark installation supplied by Onyxia. The RDD lab uses local bronze CSV copies. The DataFrame lab reads S3 directly and needs the default AWS profile, 4 CPU cores, 4,000 MiB of service memory and the Iceberg runtime matching Spark 4.1 / Scala 2.13. Each report gives the commands, questions, exercise answers and measured results. Only the Iceberg metadata is committed under `warehouse/`; its Parquet data stays in S3.
+I completed the Spark labs with the installation supplied by Onyxia, using Spark 4.1.1, Scala 2.13, 4 CPU cores and 4,000 MiB of service memory. The [Spark sources](labs/spark/) contain the transformations and exercises in cells marked by `# %%`. The RDD lab used local copies of the bronze CSVs, while the DataFrame lab read S3 through the default AWS profile. The reports contain the answers and measured results. The Iceberg metadata is stored under `warehouse/`, as requested in the DataFrame lab, with the Parquet data kept in S3.

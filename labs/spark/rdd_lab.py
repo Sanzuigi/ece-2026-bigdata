@@ -1,4 +1,4 @@
-"""Spark RDD lab and exercises. Run with spark-submit from the repo root.
+"""Spark RDD transformations and the four lab exercises.
 
 The cells use the local bronze CSV copies downloaded with AWS CLI.
 """
