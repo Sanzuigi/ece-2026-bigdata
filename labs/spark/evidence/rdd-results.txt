@@ -1,0 +1,188 @@
+Spark: 4.1.1 default parallelism: 4
+Initial partitions: 2 2
+Repartitioned orders: 8
+Lazy filter lineage:
+ (2) PythonRDD[10] at RDD at PythonRDD.scala:58 []
+ |  orders.csv MapPartitionsRDD[3] at textFile at NativeMethodAccessorImpl.java:0 []
+ |  orders.csv HadoopRDD[2] at textFile at NativeMethodAccessorImpl.java:0 []
+Uncached count 1 result= 2829 seconds= 0.4155
+Uncached count 2 result= 2829 seconds= 0.145
+UI jobs before / after each count: 1 2 3
+First six physical user lines:
+uuid,username,name,sex,address,mail,birthdate
+bdd640fb-0667-4ad1-9c80-317fa3b1799d,garzaanthony,Charles Garcia,M,"908 Jennifer Squares
+Robinsonshire, KY 01352",helenpeterson@gmail.com,1935-09-26
+17be3111-1a2a-43ed-962b-0f79c37459ee,blairamanda,Ryan Munoz,M,"Unit 6184 Box 9593
+DPO AP 09617",stanleykendra@gmail.com,2009-12-22
+47294739-614f-43d7-99db-3ad0ddd1dfb2,elizabethmiles,Jacob Wood,M,"283 Steven Groves
+Physical user lines / UUID-leading records: 101 50
+Sample orders: [{'order_id': '2339ba19-2563-4cc3-8a97-ebf555d596af', 'user_id': 'bdd640fb-0667-4ad1-9c80-317fa3b1799d', 'date': '2020-01-01 00:02:17.891488+00:00', 'quantity': 4, 'product': 'drink'}, {'order_id': 'b49e04cc-c243-49e7-a387-eaf6d4c3a832', 'user_id': 'bdd640fb-0667-4ad1-9c80-317fa3b1799d', 'date': '2020-01-01 01:28:08.796458+00:00', 'quantity': 5, 'product': 'bread'}, {'order_id': '41843b03-04dd-4054-9448-23f7e7e646c7', 'user_id': 'bdd640fb-0667-4ad1-9c80-317fa3b1799d', 'date': '2020-01-01 02:12:56.357080+00:00', 'quantity': 2, 'product': 'donut'}]
+Aggregation agreement: 50 users; total quantity: 8615
+First five sorted aggregates: [('09a0a0f6-73b0-4091-b634-c1694f76e388', 253), ('0b2f6d5c-700b-4d5f-b89f-72f32a60c652', 190), ('0dde29a6-baa4-471a-9d24-67ac778eedb3', 285), ('1190f938-a66f-47f7-b966-9fa759970043', 92), ('12738a23-5aaa-432f-8e63-22b6ab05347f', 32)]
+Completed UI stage shuffle metrics:
+{'stageId': 0, 'name': 'runJob at PythonRDD.scala:191', 'numTasks': 1, 'shuffleReadBytes': 0, 'shuffleWriteBytes': 0}
+{'stageId': 1, 'name': 'count at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:29', 'numTasks': 2, 'shuffleReadBytes': 0, 'shuffleWriteBytes': 0}
+{'stageId': 2, 'name': 'count at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:29', 'numTasks': 2, 'shuffleReadBytes': 0, 'shuffleWriteBytes': 0}
+{'stageId': 3, 'name': 'runJob at PythonRDD.scala:191', 'numTasks': 1, 'shuffleReadBytes': 0, 'shuffleWriteBytes': 0}
+{'stageId': 4, 'name': 'count at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:54', 'numTasks': 2, 'shuffleReadBytes': 0, 'shuffleWriteBytes': 0}
+{'stageId': 5, 'name': 'count at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:54', 'numTasks': 2, 'shuffleReadBytes': 0, 'shuffleWriteBytes': 0}
+{'stageId': 6, 'name': 'count at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:57', 'numTasks': 2, 'shuffleReadBytes': 0, 'shuffleWriteBytes': 0}
+{'stageId': 7, 'name': 'runJob at PythonRDD.scala:191', 'numTasks': 1, 'shuffleReadBytes': 0, 'shuffleWriteBytes': 0}
+{'stageId': 8, 'name': 'reduceByKey at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:70', 'numTasks': 2, 'shuffleReadBytes': 0, 'shuffleWriteBytes': 2513}
+{'stageId': 9, 'name': 'collect at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:72', 'numTasks': 2, 'shuffleReadBytes': 2513, 'shuffleWriteBytes': 0}
+{'stageId': 10, 'name': 'groupByKey at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:74', 'numTasks': 2, 'shuffleReadBytes': 0, 'shuffleWriteBytes': 6230}
+{'stageId': 11, 'name': 'collect at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:74', 'numTasks': 2, 'shuffleReadBytes': 6230, 'shuffleWriteBytes': 0}
+Orders before / after deduplication: 2829 2829
+Duplicate replay check passed.
+Joined orders: 2829 sample: [('f143262f-dc5c-4eed-8da0-365bf89897b9', ({'order_id': 'f1f7d904-1307-4157-98c1-28e7d6cd3155', 'user_id': 'f143262f-dc5c-4eed-8da0-365bf89897b9', 'date': '2020-01-07 17:49:04.785279+00:00', 'quantity': 1, 'product': 'bread'}, 'kayla51'))]
+Exercise 1: user_id, order_count, quantity, average
+09a0a0f6-73b0-4091-b634-c1694f76e388 83 253 3.0482
+0b2f6d5c-700b-4d5f-b89f-72f32a60c652 58 190 3.2759
+0dde29a6-baa4-471a-9d24-67ac778eedb3 92 285 3.0978
+1190f938-a66f-47f7-b966-9fa759970043 30 92 3.0667
+12738a23-5aaa-432f-8e63-22b6ab05347f 14 32 2.2857
+1723199d-bf2c-44a0-ba3c-8a71ff574e2b 8 23 2.875
+17be3111-1a2a-43ed-962b-0f79c37459ee 17 49 2.8824
+2051acef-097a-4e10-b6fe-bc0e7ecddbaf 100 301 3.01
+20ac3703-eb67-446a-b7a6-e17cd72b6108 52 162 3.1154
+3f07f814-91d6-4f78-a3e9-de99f10c718b 66 200 3.0303
+47294739-614f-43d7-99db-3ad0ddd1dfb2 22 69 3.1364
+48603b32-b4fb-4eb9-89c1-3de73b4206c5 79 246 3.1139
+490617f2-747b-4dba-88fe-3ccdc8b8d9c6 17 43 2.5294
+52828d80-44b5-41f7-97ac-6aa8bb2488a3 97 303 3.1237
+54170a17-caaa-4bbe-a4bb-f962606e0e1c 66 205 3.1061
+541c7a86-3ba5-4d2f-9ea4-5c19d0243d72 29 85 2.931
+5563f616-00e8-4ece-8b49-452d46d483f3 21 57 2.7143
+5f733a3e-5d28-4aa4-a8a3-97799c1c3517 68 212 3.1176
+71d79665-7181-4dcf-b79e-fc6e5edb0d3c 64 173 2.7031
+72bb912d-7da6-4785-b63b-4dc3a559e463 97 317 3.268
+8268690b-a438-45b5-99e4-b6714774bc58 65 199 3.0615
+82af085c-138d-494c-ab0a-beddc77444cb 18 61 3.3889
+832920b7-c143-4426-b72f-871a45ee432d 91 272 2.989
+88bd13d1-b540-430e-839f-3a254d6168bd 82 253 3.0854
+8a476a87-e49d-481d-91d8-7c6455fa1ab8 71 223 3.1408
+8d605936-0380-4b70-8d03-c91e4f8d5238 99 280 2.8283
+90164161-cfa7-41cd-a631-d00b26d794d3 91 270 2.967
+9132b63e-f162-47e4-a9c3-49e03602f8ac 39 122 3.1282
+964db03f-9340-4fad-9c4a-d56bd6016237 54 166 3.0741
+969b6662-0562-4059-968c-c69b1064005c 12 40 3.3333
+9793b9b4-1374-4146-b2c5-bd89b70b3420 100 289 2.89
+97fa7f04-8363-4007-9cae-9610c72c1fe3 92 285 3.0978
+98eeac2b-fe9f-4caa-a182-f347533f5a72 81 234 2.8889
+9be71737-06b8-4231-8e86-7f3ca487eeab 66 209 3.1667
+aab612c9-415d-474a-b5a6-69814104a8b5 45 131 2.9111
+bc67f831-cbc8-4759-b5b7-8cc7e6b3c944 6 15 2.5
+bdd640fb-0667-4ad1-9c80-317fa3b1799d 83 256 3.0843
+ce88cb2d-d4e8-4839-bc3e-058be0f3eab0 2 3 1.5
+ce9e1a11-fcbb-4e59-bbdd-cf7c9c96e9ec 85 253 2.9765
+cfd01cbd-5f65-48ce-bd21-bc11be9d61ee 56 167 2.9821
+d045dd1c-6684-49e3-b1f8-343ea99f1318 86 256 2.9767
+d20f87d0-4465-4d6b-81fb-18b3c9a7d91f 63 185 2.9365
+d47d577b-fa5a-41ca-859d-d55d4b943e30 23 80 3.4783
+d9178793-a9d3-42e6-905c-c6869f871ce7 77 239 3.1039
+d9e604b3-8412-4335-988c-656db61e5fdb 61 184 3.0164
+e05fb8bc-8a16-406c-8958-e75e21d53971 25 59 2.36
+ea4e3617-53f8-482b-8fb8-64e4f1738856 47 150 3.1915
+f143262f-dc5c-4eed-8da0-365bf89897b9 4 12 3.0
+f53d4330-cdda-44ba-ad06-e8cf3805f907 76 250 3.2895
+f94d6204-6808-493f-9fed-2c43e256a6dc 49 175 3.5714
+Exercise 2: unmatched orders: 1 record: [('00000000-0000-0000-0000-000000000000', ({'order_id': '00000000-0000-0000-0000-000000000001', 'user_id': '00000000-0000-0000-0000-000000000000', 'date': '2020-01-01 00:02:17.891488+00:00', 'quantity': 4, 'product': 'drink'}, None))]
+Exercise 3: DataFrame and RDD aggregates agree.
+== Physical Plan ==
+AdaptiveSparkPlan (11)
++- == Final Plan ==
+   ResultQueryStage (8)
+   +- * HashAggregate (7)
+      +- AQEShuffleRead (6)
+         +- ShuffleQueryStage (5), Statistics(sizeInBytes=3.2 KiB, rowCount=51)
+            +- Exchange (4)
+               +- * HashAggregate (3)
+                  +- * Project (2)
+                     +- * Scan ExistingRDD (1)
++- == Initial Plan ==
+   HashAggregate (10)
+   +- Exchange (9)
+      +- HashAggregate (3)
+         +- Project (2)
+            +- Scan ExistingRDD (1)
+
+
+(1) Scan ExistingRDD [codegen id : 1]
+Output [5]: [date#0, order_id#1, product#2, quantity#3L, user_id#4]
+Arguments: [date#0, order_id#1, product#2, quantity#3L, user_id#4], MapPartitionsRDD[79] at applySchemaToPythonRDD at NativeMethodAccessorImpl.java:0, ExistingRDD, UnknownPartitioning(0)
+
+(2) Project [codegen id : 1]
+Output [2]: [quantity#3L, user_id#4]
+Input [5]: [date#0, order_id#1, product#2, quantity#3L, user_id#4]
+
+(3) HashAggregate [codegen id : 1]
+Input [2]: [quantity#3L, user_id#4]
+Keys [1]: [user_id#4]
+Functions [1]: [partial_sum(quantity#3L)]
+Aggregate Attributes [1]: [sum#12L]
+Results [2]: [user_id#4, sum#13L]
+
+(4) Exchange
+Input [2]: [user_id#4, sum#13L]
+Arguments: hashpartitioning(user_id#4, 200), ENSURE_REQUIREMENTS, [plan_id=26]
+
+(5) ShuffleQueryStage
+Output [2]: [user_id#4, sum#13L]
+Arguments: 0
+
+(6) AQEShuffleRead
+Input [2]: [user_id#4, sum#13L]
+Arguments: coalesced
+
+(7) HashAggregate [codegen id : 2]
+Input [2]: [user_id#4, sum#13L]
+Keys [1]: [user_id#4]
+Functions [1]: [sum(quantity#3L)]
+Aggregate Attributes [1]: [sum(quantity#3L)#11L]
+Results [2]: [user_id#4, sum(quantity#3L)#11L AS quantity#5L]
+
+(8) ResultQueryStage
+Output [2]: [user_id#4, quantity#5L]
+Arguments: 1
+
+(9) Exchange
+Input [2]: [user_id#4, sum#13L]
+Arguments: hashpartitioning(user_id#4, 200), ENSURE_REQUIREMENTS, [plan_id=15]
+
+(10) HashAggregate
+Input [2]: [user_id#4, sum#13L]
+Keys [1]: [user_id#4]
+Functions [1]: [sum(quantity#3L)]
+Aggregate Attributes [1]: [sum(quantity#3L)#11L]
+Results [2]: [user_id#4, sum(quantity#3L)#11L AS quantity#5L]
+
+(11) AdaptiveSparkPlan
+Output [2]: [user_id#4, quantity#5L]
+Arguments: isFinalPlan=true
+
+
+RDD lineage:
+ (2) PythonRDD[23] at collect at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:72 []
+ |  MapPartitionsRDD[22] at mapPartitions at PythonRDD.scala:170 []
+ |  ShuffledRDD[21] at partitionBy at NativeMethodAccessorImpl.java:0 []
+ +-(2) PairwiseRDD[20] at reduceByKey at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:70 []
+    |  PythonRDD[19] at reduceByKey at /home/onyxia/work/ece-2026-bigdata/labs/spark/rdd_lab.py:70 []
+    |  PythonRDD[17] at RDD at PythonRDD.scala:58 []
+    |      CachedPartitions: 2; MemorySize: 168.0 KiB; DiskSize: 0.0 B
+    |  orders.csv MapPartitionsRDD[3] at textFile at NativeMethodAccessorImpl.java:0 []
+    |  orders.csv HadoopRDD[2] at textFile at NativeMethodAccessorImpl.java:0 []
+Storage with cached parsed orders: [{'id': 17, 'name': 'PythonRDD', 'numCachedPartitions': 2, 'memoryUsed': 172051}]
+Cached orders count 1 result= 2829 seconds= 0.1512
+Cached user_quantity count 1 result= 50 seconds= 0.1296
+Cached orders count 2 result= 2829 seconds= 0.0752
+Cached user_quantity count 2 result= 50 seconds= 0.1343
+Cached orders count 3 result= 2829 seconds= 0.1168
+Cached user_quantity count 3 result= 50 seconds= 0.1263
+Storage after unpersist: []
+Uncached orders count 1 result= 2829 seconds= 0.1037
+Uncached user_quantity count 1 result= 50 seconds= 0.1327
+Uncached orders count 2 result= 2829 seconds= 0.1037
+Uncached user_quantity count 2 result= 50 seconds= 0.0987
+Uncached orders count 3 result= 2829 seconds= 0.091
+Uncached user_quantity count 3 result= 50 seconds= 0.1313
+RDD_LAB_OK
