@@ -1,0 +1,86 @@
+Spark: 4.1.1 parallelism: 4
+root
+ |-- uuid: string (nullable = true)
+ |-- username: string (nullable = true)
+ |-- name: string (nullable = true)
+ |-- sex: string (nullable = true)
+ |-- address: string (nullable = true)
+ |-- mail: string (nullable = true)
+ |-- birthdate: string (nullable = true)
+
++---------------------------------------------+
+|address                                      |
++---------------------------------------------+
+|908 Jennifer Squares\nRobinsonshire, KY 01352|
+|Unit 6184 Box 9593\nDPO AP 09617             |
+|283 Steven Groves\nLake Mark, WI 07832       |
++---------------------------------------------+
+only showing top 3 rows
+Bronze counts: 50 2829
+UI Storage cached bronze: [{'id': 21, 'name': 'FileScan csv [uuid#0,username#1,name#2,sex#3,address#4,mail#5,birthdate#6] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[s3a://user-r-homsi-ece/bronze/users.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<uuid:string,username:string,name:string,sex:string,address:string,mail:string,birthdate:st...\n', 'numCachedPartitions': 1, 'memoryUsed': 10048}, {'id': 33, 'name': 'FileScan csv [uuid#7,user_uuid#8,date#9,quantity#10,product#11] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[s3a://user-r-homsi-ece/bronze/orders.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<uuid:string,user_uuid:string,date:string,quantity:int,product:string>\n', 'numCachedPartitions': 1, 'memoryUsed': 227216}]
+Cached bronze repeat 1 50 2829 seconds= 0.3802
+Cached bronze repeat 2 50 2829 seconds= 0.4849
++------------------------------------+--------------+------------------+---+-----------------------+----------+---------------------+--------------+-----+--------+
+|user_id                             |username      |name              |sex|email                  |birthdate |street               |city          |state|zip_code|
++------------------------------------+--------------+------------------+---+-----------------------+----------+---------------------+--------------+-----+--------+
+|bdd640fb-0667-4ad1-9c80-317fa3b1799d|garzaanthony  |Charles Garcia    |M  |helenpeterson@gmail.com|1935-09-26|908 Jennifer Squares |Robinsonshire |KY   |01352   |
+|17be3111-1a2a-43ed-962b-0f79c37459ee|blairamanda   |Ryan Munoz        |M  |stanleykendra@gmail.com|2009-12-22|Unit 6184 Box 9593   |NULL          |AP   |09617   |
+|47294739-614f-43d7-99db-3ad0ddd1dfb2|elizabethmiles|Jacob Wood        |M  |lydiatrujillo@yahoo.com|1941-10-25|283 Steven Groves    |Lake Mark     |WI   |07832   |
+|9132b63e-f162-47e4-a9c3-49e03602f8ac|ithomas       |Jonathan Wilkerson|M  |cruzcaitlin@yahoo.com  |1972-02-20|969 Cox Dam Suite 101|Lake Ernest   |TX   |55834   |
+|f143262f-dc5c-4eed-8da0-365bf89897b9|kayla51       |Ashley Dyer       |F  |georgetracy@gmail.com  |2018-07-14|0482 Monica Hills    |East Nathaniel|GA   |71198   |
++------------------------------------+--------------+------------------+---+-----------------------+----------+---------------------+--------------+-----+--------+
+only showing top 5 rows
+Orders original / with duplicates / deduplicated: 2829 2832 2829
+Orders API versus SQL: identical rows
++-----+-----+------------+
+|state|users|missing_city|
++-----+-----+------------+
+|   AE|    3|           3|
+|   FM|    3|           0|
+|   AP|    2|           2|
+|   DE|    2|           0|
+|   HI|    2|           0|
+|   NJ|    2|           0|
+|   NM|    2|           0|
+|   PA|    2|           0|
+|   TX|    2|           0|
+|   VI|    2|           0|
++-----+-----+------------+
+only showing top 10 rows
+Birthdate API versus SQL: identical rows
+Invalid birthdate users: 5
+users Parquet round trip: identical rows
+users output partitions: 1
+orders Parquet round trip: identical rows
+orders output partitions: 1
+SILVER_BUILD_SECONDS 36.9414
+Users Iceberg round trip: identical rows
+Orders Iceberg round trip: identical rows
++-------------------+---------+-----------------------+
+|snapshot_id        |operation|committed_at           |
++-------------------+---------+-----------------------+
+|1752134345965458086|overwrite|2026-10-26 16:27:31.185|
++-------------------+---------+-----------------------+
+
++------------------------------------------------------------------------------------------------------------------+-----------+------------+------------------+
+|file_path                                                                                                         |file_format|record_count|file_size_in_bytes|
++------------------------------------------------------------------------------------------------------------------+-----------+------------+------------------+
+|s3a://user-r-homsi-ece/warehouse/silver/orders/data/00000-140-2e04d4e9-6afc-4644-b0f6-28b68318707c-0-00001.parquet|PARQUET    |2829        |84055             |
++------------------------------------------------------------------------------------------------------------------+-----------+------------+------------------+
+
+Iceberg pre-append snapshot: identical rows
++-------------------+---------+-----------------------+
+|snapshot_id        |operation|committed_at           |
++-------------------+---------+-----------------------+
+|1752134345965458086|overwrite|2026-10-26 16:27:31.185|
+|8379743578759389038|append   |2026-10-26 16:27:37.684|
++-------------------+---------+-----------------------+
+
+Parquet after append: 2830 rows; no snapshot catalogue.
+Restored Iceberg baseline: identical rows
+Restored Parquet baseline: identical rows
+ZIP timing native regexp_extract seconds= [0.2071, 0.1394, 0.1247]
+ZIP timing Python UDF seconds= [0.185, 0.1643, 0.1408]
+ZIP timing Pandas UDF seconds= [0.2041, 0.1972, 0.1897]
+Final UI Storage: [{'id': 21, 'name': 'FileScan csv [uuid#0,username#1,name#2,sex#3,address#4,mail#5,birthdate#6] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[s3a://user-r-homsi-ece/bronze/users.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<uuid:string,username:string,name:string,sex:string,address:string,mail:string,birthdate:st...\n', 'numCachedPartitions': 1, 'memoryUsed': 10048}, {'id': 33, 'name': 'FileScan csv [uuid#7,user_uuid#8,date#9,quantity#10,product#11] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[s3a://user-r-homsi-ece/bronze/orders.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<uuid:string,user_uuid:string,date:string,quantity:int,product:string>\n', 'numCachedPartitions': 1, 'memoryUsed': 227216}]
+DATAFRAME_LAB_OK

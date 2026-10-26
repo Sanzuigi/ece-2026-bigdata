@@ -1,0 +1,34 @@
+   Building ece-2026-bigdata @ file:///home/onyxia/work/ece-2026-bigdata
+      Built ece-2026-bigdata @ file:///home/onyxia/work/ece-2026-bigdata
+Uninstalled 1 package in 2ms
+Installed 1 package in 10ms
+['Count']
+
+['Count']
+
+['Count']
+
+['Count']
+
+['engine', 'orders', 'quantity']
+('dbt', 2829, 8615)
+('spark', 2829, 8615)
+['engine', 'users']
+('dbt', 50)
+('spark', 50)
+['model', 'different_rows']
+('orders', 0)
+('users', 0)
+['column_name', 'column_type', 'null', 'key', 'default', 'extra']
+('order_id', 'UUID', 'YES', None, None, None)
+('user_id', 'UUID', 'YES', None, None, None)
+('ordered_at', 'TIMESTAMP WITH TIME ZONE', 'YES', None, None, None)
+('quantity', 'INTEGER', 'YES', None, None, None)
+('product', 'VARCHAR', 'YES', None, None, None)
+['column_name', 'column_type', 'null', 'key', 'default', 'extra']
+('order_id', 'VARCHAR', 'YES', None, None, None)
+('user_id', 'VARCHAR', 'YES', None, None, None)
+('ordered_at', 'TIMESTAMP', 'YES', None, None, None)
+('quantity', 'INTEGER', 'YES', None, None, None)
+('product', 'VARCHAR', 'YES', None, None, None)
+ENGINE_COMPARISON_COMPLETE
