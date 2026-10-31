@@ -2,7 +2,7 @@
 
 Roy Homsi, ECE Paris
 
-This project contains my work for the uv, S3, DuckDB, dbt, Spark RDD and Spark DataFrame labs. I generated fictional users and orders in Python, uploaded them to the bronze layer in S3, then used DuckDB to query the data and compare CSV with Parquet. The dbt and Spark projects build and validate the silver layer, with Parquet exports and Iceberg tables.
+This project contains my work for the uv, S3, DuckDB, dbt, Spark RDD, Spark DataFrame and Iceberg labs. I generated fictional users and orders in Python, uploaded them to the bronze layer in S3, then used DuckDB to query the data and compare CSV with Parquet. The dbt and Spark projects build and validate the silver layer, with Parquet exports and Iceberg tables.
 
 ## Labs
 
@@ -12,6 +12,7 @@ This project contains my work for the uv, S3, DuckDB, dbt, Spark RDD and Spark D
 - [dbt: bronze to silver, data tests and Parquet exports](labs/lab-04-dbt.md)
 - [Spark RDD: partitions, shuffles, joins and exercises](labs/lab-05-spark-rdd.md)
 - [Spark DataFrame: silver, Parquet, Iceberg and exercises](labs/lab-06-spark-dataframe.md)
+- [Iceberg: snapshots, time travel and schema evolution](labs/lab-07-iceberg.md)
 
 ## Usage
 
